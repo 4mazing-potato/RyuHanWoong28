@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 266284268}
   - component: {fileID: 266284271}
   - component: {fileID: 266284272}
+  - component: {fileID: 266284273}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -276,6 +277,26 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &266284273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05791dda8531458fa2251aa0448ff487, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  projectilePrefab: {fileID: 7091353184934885741, guid: d584fea26cb8aeb48ba18c02c8db6f2e, type: 3}
+  spawnPoint: {fileID: 266284270}
+  damage: 1
+  speed: 8
+  lifetime: 3
+  scale: 1
+  fireInterval: 0.5
+  minTurnCooldown: 0.15
 --- !u!1 &432350254
 GameObject:
   m_ObjectHideFlags: 0
