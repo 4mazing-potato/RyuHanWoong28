@@ -3,7 +3,7 @@ using UnityEngine;
 public class AutoShooter : MonoBehaviour
 {
     [Header("Projectile")]
-    [SerializeField] private Projectile projectilePrefab;
+    [SerializeField] private ProjectileController projectilePrefab;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float damage = 1f;
     [SerializeField] private float speed = 8f;
@@ -60,7 +60,7 @@ public class AutoShooter : MonoBehaviour
         }
 
         Transform origin = spawnPoint != null ? spawnPoint : transform;
-        Projectile projectile = Instantiate(projectilePrefab, origin.position, Quaternion.identity);
+        ProjectileController projectile = Instantiate(projectilePrefab, origin.position, Quaternion.identity);
         projectile.Initialize(lastInputDirection, damage, speed, lifetime, scale);
     }
 }
