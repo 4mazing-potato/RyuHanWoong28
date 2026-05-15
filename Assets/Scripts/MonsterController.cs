@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MonsterController : MonoBehaviour, IProjectileDamageable
 {
@@ -12,7 +13,9 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
     private const string EnemyLayerName = "Enemy";
 
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float maxHealth = 3f;
+    [FormerlySerializedAs("maxHealth")]
+    [SerializeField] private float maxHP = 3f;
+    [SerializeField] private float attackDamage = 1f;
     [Header("Direction Flip")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private SpriteFacingDirection spriteFacingDirection = SpriteFacingDirection.Right;
@@ -32,7 +35,7 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     private void Awake()
     {
-        currentHealth = maxHealth;
+        currentHealth = maxHP;
         CacheSpriteRenderer();
         AssignEnemyLayerIfAvailable();
         EnsureProjectileCollisionComponents();
@@ -61,6 +64,27 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
         transform.position += moveDirection * (moveSpeed * Time.deltaTime);
     }
 
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        TryDamagePlayer(collision.gameObject);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        TryDamagePlayer(collision.gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        TryDamagePlayer(other.gameObject);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryDamagePlayer(other.gameObject);
+    }
+
     private void OnDestroy()
     {
         if (isRegisteredWithSpawner && spawnManager != null)
@@ -75,15 +99,34 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
         spawnManager = owner;
         spawnRuleIndex = ruleIndex;
         isRegisteredWithSpawner = owner != null && ruleIndex >= 0;
-        currentHealth = maxHealth;
+        currentHealth = maxHP;
     }
 
     public void TakeDamage(float damage)
     {
-        currentHealth -= Mathf.Max(0f, damage);
+        if (damage <= 0f)
+        {
+            return;
+        }
+
+        currentHealth = Mathf.Max(0f, currentHealth - damage);
         if (currentHealth <= 0f)
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void TryDamagePlayer(GameObject targetObject)
+    {
+        if (targetObject == null)
+        {
+            return;
+        }
+
+        PlayerHealth playerHealth = targetObject.GetComponentInParent<PlayerHealth>();
+        if (playerHealth != null && playerHealth.CompareTag(PlayerTag))
+        {
+            playerHealth.TakeDamage(attackDamage);
         }
     }
 
