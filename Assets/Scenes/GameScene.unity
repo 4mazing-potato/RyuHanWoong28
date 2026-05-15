@@ -292,8 +292,8 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3351289361234567890, guid: d584fea26cb8aeb48ba18c02c8db6f2e, type: 3}
   spawnPoint: {fileID: 266284270}
   damage: 1
-  speed: 8
-  lifetime: 3
+  speed: 20
+  lifetime: 5
   scale: 0.75
   fireInterval: 0.5
   minTurnCooldown: 0.15
@@ -484,23 +484,6 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &1257284138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1257284135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 489e1d8094e84895ba93236b7c93d0ed, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  tilemapPrefab: {fileID: 5527352512522103660, guid: 6f9f08bc916f76d468afe869a1e96281, type: 3}
-  targetCamera: {fileID: 432350256}
-  seedTilemap: {fileID: 960169482}
-  preloadChunks: 1
-  cleanupPadding: 1
 --- !u!4 &1257284137
 Transform:
   m_ObjectHideFlags: 0
@@ -515,6 +498,73 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 960169482}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1257284138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257284135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 489e1d8094e84895ba93236b7c93d0ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemapPrefab: {fileID: 5527352512522103660, guid: 6f9f08bc916f76d468afe869a1e96281, type: 3}
+  targetCamera: {fileID: 432350256}
+  seedTilemap: {fileID: 960169482}
+  preloadChunks: 1
+  cleanupPadding: 1
+--- !u!1 &1579614553
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1579614555}
+  - component: {fileID: 1579614554}
+  m_Layer: 0
+  m_Name: MonsterSpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1579614554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579614553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 878ffd1e70e1463d882ccedbdf14bb5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawnManager
+  currentStageId: 1
+  targetCamera: {fileID: 432350256}
+  playerTarget: {fileID: 266284270}
+  spawnOutsideMargin: 1.5
+  spawnRadiusRandomRange: 2
+  spawnZ: 0
+--- !u!4 &1579614555
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579614553}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.8876, y: 2.82617, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8154594292261607214
@@ -581,3 +631,4 @@ SceneRoots:
   - {fileID: 432350257}
   - {fileID: 266284270}
   - {fileID: 1257284137}
+  - {fileID: 1579614555}
