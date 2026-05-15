@@ -131,6 +131,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   maxHealth: 3
+  spriteRenderer: {fileID: 8333917415496626051}
+  spriteFacingDirection: 0
+  horizontalFlipThreshold: 0.001
 --- !u!50 &3855883076216633159
 Rigidbody2D:
   serializedVersion: 5
