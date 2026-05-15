@@ -2,11 +2,21 @@ using UnityEngine;
 
 public class MonsterController : MonoBehaviour, IProjectileDamageable
 {
+    private enum SpriteFacingDirection
+    {
+        Right,
+        Left
+    }
+
     private const string PlayerTag = "Player";
     private const string EnemyLayerName = "Enemy";
 
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float maxHealth = 3f;
+    [Header("Direction Flip")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteFacingDirection spriteFacingDirection = SpriteFacingDirection.Right;
+    [SerializeField] private float horizontalFlipThreshold = 0.001f;
 
     private Transform target;
     private MonsterSpawnManager spawnManager;
@@ -23,6 +33,7 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
     private void Awake()
     {
         currentHealth = maxHealth;
+        CacheSpriteRenderer();
         AssignEnemyLayerIfAvailable();
         EnsureProjectileCollisionComponents();
     }
@@ -45,7 +56,9 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
             return;
         }
 
-        transform.position += direction.normalized * (moveSpeed * Time.deltaTime);
+        Vector3 moveDirection = direction.normalized;
+        UpdateHorizontalFlip(moveDirection.x);
+        transform.position += moveDirection * (moveSpeed * Time.deltaTime);
     }
 
     private void OnDestroy()
@@ -78,6 +91,27 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
     {
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         target = player != null ? player.transform : null;
+    }
+
+    private void CacheSpriteRenderer()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+    }
+
+    private void UpdateHorizontalFlip(float moveDirectionX)
+    {
+        if (spriteRenderer == null || Mathf.Abs(moveDirectionX) <= Mathf.Max(0f, horizontalFlipThreshold))
+        {
+            return;
+        }
+
+        bool isMovingRight = moveDirectionX > 0f;
+        spriteRenderer.flipX = spriteFacingDirection == SpriteFacingDirection.Right
+            ? !isMovingRight
+            : isMovingRight;
     }
 
     private void AssignEnemyLayerIfAvailable()
