@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2593911822903900670}
   - component: {fileID: -1638520831361034776}
   - component: {fileID: 3351289361234567890}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 2.433526, y: 0.13793278}
   m_Radius: 1.4647846
-
 --- !u!114 &3351289361234567890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,9 +167,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 438b56d06e76460895534c4ff4f4fd48, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  damage: 1
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileDamage: 2
   speed: 8
   lifetime: 3
   scale: 1

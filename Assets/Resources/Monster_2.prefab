@@ -108,7 +108,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  maxHealth: 3
+  maxHP: 5
+  attackDamage: 2
   spriteRenderer: {fileID: 8333917415496626051}
   spriteFacingDirection: 0
   horizontalFlipThreshold: 0.001
