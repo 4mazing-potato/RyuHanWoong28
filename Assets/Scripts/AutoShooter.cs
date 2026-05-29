@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AutoShooter : MonoBehaviour
 {
     [Header("Projectile")]
     [SerializeField] private ProjectileController projectilePrefab;
     [SerializeField] private Transform spawnPoint;
-    [SerializeField] private float damage = 1f;
+    [FormerlySerializedAs("damage")]
+    [SerializeField] private float damageMultiplier = 1f;
     [SerializeField] private float speed = 8f;
     [SerializeField] private float lifetime = 3f;
     [SerializeField] private float scale = 1f;
@@ -14,6 +16,7 @@ public class AutoShooter : MonoBehaviour
     [SerializeField] private float fireInterval = 0.5f;
     [SerializeField] private float minTurnCooldown = 0.15f;
 
+    private PlayerStatus playerStatus;
     private Vector2 lastInputDirection = Vector2.right;
     private float nextFireTime;
 
@@ -23,6 +26,8 @@ public class AutoShooter : MonoBehaviour
         {
             spawnPoint = transform;
         }
+
+        playerStatus = GetComponent<PlayerStatus>();
     }
 
     private void Update()
@@ -57,14 +62,14 @@ public class AutoShooter : MonoBehaviour
         }
     }
 
-    public void IncreaseDamage(float amount)
+    public void IncreaseDamageMultiplier(float amount)
     {
         if (amount <= 0f)
         {
             return;
         }
 
-        damage += amount;
+        damageMultiplier += amount;
     }
 
     public void MultiplyFireInterval(float multiplier)
@@ -96,6 +101,6 @@ public class AutoShooter : MonoBehaviour
 
         Transform origin = spawnPoint != null ? spawnPoint : transform;
         ProjectileController projectile = Instantiate(projectilePrefab, origin.position, Quaternion.identity);
-        projectile.Initialize(lastInputDirection, damage, speed, lifetime, scale);
+        projectile.Initialize(lastInputDirection, playerStatus, damageMultiplier, speed, lifetime, scale);
     }
 }

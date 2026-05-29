@@ -1,7 +1,8 @@
 public enum LevelUpCardEffect
 {
     None = 0,
-    IncreaseDamage,
+    ATKUP,
+    IncreaseDamageMultiplier,
     MultiplyFireInterval,
     IncreaseProjectileScale
 }
