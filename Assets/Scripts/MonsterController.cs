@@ -46,6 +46,11 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     private void Update()
     {
+        if (GameplayPauseManager.IsPaused)
+        {
+            return;
+        }
+
         if (target == null)
         {
             FindPlayerTarget();
@@ -107,7 +112,7 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     public void TakeDamage(float damage)
     {
-        if (damage <= 0f)
+        if (GameplayPauseManager.IsPaused || damage <= 0f)
         {
             return;
         }
@@ -159,7 +164,7 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     private void TryDamagePlayer(GameObject targetObject)
     {
-        if (targetObject == null)
+        if (GameplayPauseManager.IsPaused || targetObject == null)
         {
             return;
         }

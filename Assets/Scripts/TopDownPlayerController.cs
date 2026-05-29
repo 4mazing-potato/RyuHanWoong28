@@ -21,6 +21,14 @@ public class TopDownPlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayPauseManager.IsPaused)
+        {
+            animator.SetBool(IsMovingHash, false);
+            animator.SetFloat(MoveXHash, facingDirection.x);
+            animator.SetFloat(MoveYHash, facingDirection.y);
+            return;
+        }
+
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector2 movement = input.sqrMagnitude > 1f ? input.normalized : input;
 

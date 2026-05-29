@@ -15,6 +15,11 @@ public class ExpController : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayPauseManager.IsPaused)
+        {
+            return;
+        }
+
         if (isAbsorbed)
         {
             return;

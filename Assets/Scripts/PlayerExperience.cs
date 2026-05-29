@@ -41,7 +41,13 @@ public class PlayerExperience : MonoBehaviour
 
         currentExp += expAmount;
         ProcessLevelUps();
+        int gainedLevelCount = currentLevel - startLevel;
         UpdateLevelText();
+
+        if (gainedLevelCount > 0)
+        {
+            LevelUpSkillUpgradeController.EnsureInstance().EnqueueLevelUps(gainedLevelCount);
+        }
 
         if (expBarController != null)
         {
