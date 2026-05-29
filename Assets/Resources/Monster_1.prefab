@@ -130,13 +130,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  maxHealth: 3
+  maxHP: 3
+  attackDamage: 1
   spriteRenderer: {fileID: 8333917415496626051}
   spriteFacingDirection: 0
   horizontalFlipThreshold: 0.001
   expDropOptions:
   - expPrefab: {fileID: 8415757917457020936, guid: 4131350ee61fe47479ce1ce22e28c420, type: 3}
-    dropChance: 1
+    dropChance: 0.8
   - expPrefab: {fileID: 8415757917457020936, guid: aa905e24681faa549863fa6b5155ebaa, type: 3}
     dropChance: 0.2
 --- !u!50 &3855883076216633159
