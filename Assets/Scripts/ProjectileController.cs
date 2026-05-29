@@ -9,7 +9,8 @@ public class ProjectileController : MonoBehaviour
     private const string PlayerTag = "Player";
 
     [FormerlySerializedAs("damage")]
-    [SerializeField] private float projectileDamage = 1f;
+    [FormerlySerializedAs("projectileDamage")]
+    [SerializeField] private float damageMultiplier = 1f;
     [SerializeField] private float speed = 8f;
     [SerializeField] private float lifetime = 3f;
     [SerializeField] private float scale = 1f;
@@ -18,6 +19,7 @@ public class ProjectileController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Vector2 moveDirection = Vector2.right;
     private bool hasHit;
+    private PlayerStatus ownerStatus;
 
     private void Awake()
     {
@@ -33,10 +35,11 @@ public class ProjectileController : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    public void Initialize(Vector2 direction, float damage, float projectileSpeed, float projectileLifetime, float projectileScale)
+    public void Initialize(Vector2 direction, PlayerStatus ownerStatus, float projectileDamageMultiplier, float projectileSpeed, float projectileLifetime, float projectileScale)
     {
         moveDirection = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
-        projectileDamage = Mathf.Max(0f, damage);
+        this.ownerStatus = ownerStatus;
+        damageMultiplier = Mathf.Max(0f, projectileDamageMultiplier);
         speed = Mathf.Max(0f, projectileSpeed);
         lifetime = Mathf.Max(0.01f, projectileLifetime);
         scale = Mathf.Max(0.01f, projectileScale);
@@ -95,14 +98,19 @@ public class ProjectileController : MonoBehaviour
         IProjectileDamageable damageable = target.GetComponentInParent<IProjectileDamageable>();
         if (damageable != null)
         {
-            damageable.TakeDamage(projectileDamage);
+            damageable.TakeDamage(CalculateDamage());
         }
         else
         {
-            target.SendMessageUpwards("TakeDamage", projectileDamage, SendMessageOptions.DontRequireReceiver);
+            target.SendMessageUpwards("TakeDamage", CalculateDamage(), SendMessageOptions.DontRequireReceiver);
         }
 
         Destroy(gameObject);
+    }
+
+    private float CalculateDamage()
+    {
+        return ownerStatus != null ? ownerStatus.CalculateDamage(damageMultiplier) : damageMultiplier;
     }
 
     private bool ShouldIgnoreTarget(GameObject target)

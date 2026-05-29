@@ -36,6 +36,7 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private int pendingLevelUpCount;
     private bool isPanelOpen;
     private AutoShooter playerShooter;
+    private PlayerStatus playerStatus;
 
     public bool IsPanelOpen => isPanelOpen;
     public int PendingLevelUpCount => pendingLevelUpCount;
@@ -288,23 +289,40 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
 
     private void ApplyUpgrade(LevelUpCardData card)
     {
-        AutoShooter shooter = GetPlayerShooter();
-        if (shooter == null)
-        {
-            return;
-        }
-
         float value = card.Value.GetValueOrDefault();
         switch (card.Effect)
         {
-            case LevelUpCardEffect.IncreaseDamage:
-                shooter.IncreaseDamage(value);
+            case LevelUpCardEffect.ATKUP:
+                PlayerStatus status = GetPlayerStatus();
+                if (status != null)
+                {
+                    status.ApplyAttackUpPercent(value);
+                }
+
+                break;
+            case LevelUpCardEffect.IncreaseDamageMultiplier:
+                AutoShooter damageShooter = GetPlayerShooter();
+                if (damageShooter != null)
+                {
+                    damageShooter.IncreaseDamageMultiplier(value);
+                }
+
                 break;
             case LevelUpCardEffect.MultiplyFireInterval:
-                shooter.MultiplyFireInterval(value);
+                AutoShooter intervalShooter = GetPlayerShooter();
+                if (intervalShooter != null)
+                {
+                    intervalShooter.MultiplyFireInterval(value);
+                }
+
                 break;
             case LevelUpCardEffect.IncreaseProjectileScale:
-                shooter.IncreaseProjectileScale(value);
+                AutoShooter scaleShooter = GetPlayerShooter();
+                if (scaleShooter != null)
+                {
+                    scaleShooter.IncreaseProjectileScale(value);
+                }
+
                 break;
         }
     }
@@ -441,5 +459,17 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         playerShooter = player != null ? player.GetComponent<AutoShooter>() : null;
         return playerShooter;
+    }
+
+    private PlayerStatus GetPlayerStatus()
+    {
+        if (playerStatus != null)
+        {
+            return playerStatus;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
+        playerStatus = player != null ? player.GetComponent<PlayerStatus>() : null;
+        return playerStatus;
     }
 }
