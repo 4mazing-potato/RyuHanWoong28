@@ -1,6 +1,11 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class LevelUpSkillUpgradeController : MonoBehaviour
 {
@@ -9,7 +14,13 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private const string CardOneName = "Card_1";
     private const string CardTwoName = "Card_2";
     private const string CardThreeName = "Card_3";
+    private const string IconObjectName = "Image_Icon";
+    private const string LegacyIconObjectName = "Image Icon";
+    private const string DescriptionObjectName = "Text_Description";
+    private const string LegacyDescriptionObjectName = "Text_Destcription";
+    private const string SpriteFolderPath = "Assets/Sprites";
     private const string PlayerTag = "Player";
+    private const int MaxOfferedCardCount = 3;
 
     public static LevelUpSkillUpgradeController Instance { get; private set; }
 
@@ -18,10 +29,9 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     [SerializeField] private Button cardTwoButton;
     [SerializeField] private Button cardThreeButton;
 
-    [Header("Upgrade Values")]
-    [SerializeField] private float damageBonus = 1f;
-    [SerializeField] private float fireIntervalMultiplier = 0.85f;
-    [SerializeField] private float projectileScaleBonus = 0.15f;
+    private readonly HashSet<int> selectedCardIds = new HashSet<int>();
+    private readonly LevelUpCardData[] offeredCards = new LevelUpCardData[MaxOfferedCardCount];
+    private readonly bool[] hasOfferedCard = new bool[MaxOfferedCardCount];
 
     private int pendingLevelUpCount;
     private bool isPanelOpen;
@@ -119,6 +129,15 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
             return;
         }
 
+        int offeredCardCount = BuildOfferedCards();
+        if (offeredCardCount <= 0)
+        {
+            Debug.LogWarning("There are no selectable level-up cards left in LevelUpCard.csv.", this);
+            TryOpenNextPanel();
+            return;
+        }
+
+        RefreshCardViews();
         isPanelOpen = true;
         cardContainer.SetActive(true);
         GameplayPauseManager.RequestPause();
@@ -131,12 +150,143 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
             return;
         }
 
-        ApplyUpgrade(cardIndex);
+        int cardSlot = cardIndex - 1;
+        if (cardSlot < 0 || cardSlot >= MaxOfferedCardCount || !hasOfferedCard[cardSlot])
+        {
+            return;
+        }
+
+        LevelUpCardData selectedCard = offeredCards[cardSlot];
+        selectedCardIds.Add(selectedCard.ID);
+        ApplyUpgrade(selectedCard);
         ClosePanelAndResume();
         TryOpenNextPanel();
     }
 
-    private void ApplyUpgrade(int cardIndex)
+    private int BuildOfferedCards()
+    {
+        ClearOfferedCards();
+        List<LevelUpCardData> candidates = BuildCandidateCards();
+        int drawCount = Mathf.Min(MaxOfferedCardCount, candidates.Count);
+
+        for (int i = 0; i < drawCount; i++)
+        {
+            int selectedIndex = PickWeightedCandidateIndex(candidates);
+            offeredCards[i] = candidates[selectedIndex];
+            hasOfferedCard[i] = true;
+            candidates.RemoveAt(selectedIndex);
+        }
+
+        return drawCount;
+    }
+
+    private List<LevelUpCardData> BuildCandidateCards()
+    {
+        IReadOnlyList<LevelUpCardData> rows = LevelUpCardTable.Rows;
+        List<LevelUpCardData> candidates = new List<LevelUpCardData>();
+
+        for (int i = 0; i < rows.Count; i++)
+        {
+            LevelUpCardData row = rows[i];
+            if (selectedCardIds.Contains(row.ID))
+            {
+                continue;
+            }
+
+            if (row.Required.HasValue && !selectedCardIds.Contains(row.Required.Value))
+            {
+                continue;
+            }
+
+            candidates.Add(row);
+        }
+
+        return candidates;
+    }
+
+    private static int PickWeightedCandidateIndex(IReadOnlyList<LevelUpCardData> candidates)
+    {
+        float totalRatio = 0f;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            totalRatio += Mathf.Max(0f, candidates[i].Ratio);
+        }
+
+        if (totalRatio <= 0f)
+        {
+            return Random.Range(0, candidates.Count);
+        }
+
+        float roll = Random.Range(0f, totalRatio);
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            roll -= Mathf.Max(0f, candidates[i].Ratio);
+            if (roll <= 0f)
+            {
+                return i;
+            }
+        }
+
+        return candidates.Count - 1;
+    }
+
+    private void ClearOfferedCards()
+    {
+        for (int i = 0; i < MaxOfferedCardCount; i++)
+        {
+            offeredCards[i] = default;
+            hasOfferedCard[i] = false;
+        }
+    }
+
+    private void RefreshCardViews()
+    {
+        RefreshCardView(cardOneButton, 0);
+        RefreshCardView(cardTwoButton, 1);
+        RefreshCardView(cardThreeButton, 2);
+    }
+
+    private void RefreshCardView(Button button, int cardSlot)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        bool hasCard = hasOfferedCard[cardSlot];
+        button.gameObject.SetActive(hasCard);
+        button.interactable = hasCard;
+        if (!hasCard)
+        {
+            return;
+        }
+
+        LevelUpCardData card = offeredCards[cardSlot];
+        Image iconImage = FindChildComponentByName<Image>(button.transform, IconObjectName);
+        if (iconImage == null)
+        {
+            iconImage = FindChildComponentByName<Image>(button.transform, LegacyIconObjectName);
+        }
+
+        if (iconImage != null)
+        {
+            iconImage.sprite = LoadCardIcon(card.Icon);
+            iconImage.enabled = iconImage.sprite != null;
+        }
+
+        TextMeshProUGUI descriptionText = FindChildComponentByName<TextMeshProUGUI>(button.transform, DescriptionObjectName);
+        if (descriptionText == null)
+        {
+            descriptionText = FindChildComponentByName<TextMeshProUGUI>(button.transform, LegacyDescriptionObjectName);
+        }
+
+        if (descriptionText != null)
+        {
+            descriptionText.text = card.Desc;
+        }
+    }
+
+    private void ApplyUpgrade(LevelUpCardData card)
     {
         AutoShooter shooter = GetPlayerShooter();
         if (shooter == null)
@@ -144,16 +294,17 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
             return;
         }
 
-        switch (cardIndex)
+        float value = card.Value.GetValueOrDefault();
+        switch (card.Effect)
         {
-            case 1:
-                shooter.IncreaseDamage(damageBonus);
+            case LevelUpCardEffect.IncreaseDamage:
+                shooter.IncreaseDamage(value);
                 break;
-            case 2:
-                shooter.MultiplyFireInterval(fireIntervalMultiplier);
+            case LevelUpCardEffect.MultiplyFireInterval:
+                shooter.MultiplyFireInterval(value);
                 break;
-            case 3:
-                shooter.IncreaseProjectileScale(projectileScaleBonus);
+            case LevelUpCardEffect.IncreaseProjectileScale:
+                shooter.IncreaseProjectileScale(value);
                 break;
         }
     }
@@ -167,6 +318,7 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private void ClosePanelWithoutResuming()
     {
         isPanelOpen = false;
+        ClearOfferedCards();
         if (cardContainer != null)
         {
             cardContainer.SetActive(false);
@@ -232,6 +384,51 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private static T FindChildComponentByName<T>(Transform root, string childName) where T : Component
+    {
+        if (root == null)
+        {
+            return null;
+        }
+
+        T rootComponent = root.name == childName ? root.GetComponent<T>() : null;
+        if (rootComponent != null)
+        {
+            return rootComponent;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            T childComponent = FindChildComponentByName<T>(root.GetChild(i), childName);
+            if (childComponent != null)
+            {
+                return childComponent;
+            }
+        }
+
+        return null;
+    }
+
+    private static Sprite LoadCardIcon(string iconName)
+    {
+        if (string.IsNullOrWhiteSpace(iconName))
+        {
+            return null;
+        }
+
+        Sprite sprite = Resources.Load<Sprite>(iconName);
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
+#if UNITY_EDITOR
+        return AssetDatabase.LoadAssetAtPath<Sprite>($"{SpriteFolderPath}/{iconName}.png");
+#else
+        return null;
+#endif
     }
 
     private AutoShooter GetPlayerShooter()
