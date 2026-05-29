@@ -113,6 +113,11 @@ MonoBehaviour:
   spriteRenderer: {fileID: 8333917415496626051}
   spriteFacingDirection: 0
   horizontalFlipThreshold: 0.001
+  expDropOptions:
+  - expPrefab: {fileID: 8415757917457020936, guid: aa905e24681faa549863fa6b5155ebaa, type: 3}
+    dropChance: 1
+  - expPrefab: {fileID: 8415757917457020936, guid: 8be7a598e9010454c840ce1a90d4c3ac, type: 3}
+    dropChance: 0.2
 --- !u!50 &3855883076216633159
 Rigidbody2D:
   serializedVersion: 5

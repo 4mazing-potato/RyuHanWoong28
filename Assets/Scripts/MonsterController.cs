@@ -20,12 +20,15 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private SpriteFacingDirection spriteFacingDirection = SpriteFacingDirection.Right;
     [SerializeField] private float horizontalFlipThreshold = 0.001f;
+    [Header("Experience Drop")]
+    [SerializeField] private ExpDropOption[] expDropOptions = new ExpDropOption[0];
 
     private Transform target;
     private MonsterSpawnManager spawnManager;
     private int spawnRuleIndex = -1;
     private float currentHealth;
     private bool isRegisteredWithSpawner;
+    private bool isDead;
 
     public float MoveSpeed
     {
@@ -112,7 +115,45 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
         currentHealth = Mathf.Max(0f, currentHealth - damage);
         if (currentHealth <= 0f)
         {
-            Destroy(gameObject);
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        isDead = true;
+        TryDropExpOrb();
+        Destroy(gameObject);
+    }
+
+    private void TryDropExpOrb()
+    {
+        if (expDropOptions == null)
+        {
+            return;
+        }
+
+        Vector3 dropPosition = transform.position;
+        for (int i = 0; i < expDropOptions.Length; i++)
+        {
+            ExpDropOption dropOption = expDropOptions[i];
+            if (dropOption == null || dropOption.ExpPrefab == null)
+            {
+                continue;
+            }
+
+            float dropChance = Mathf.Clamp01(dropOption.DropChance);
+            if (Random.value > dropChance)
+            {
+                continue;
+            }
+
+            Instantiate(dropOption.ExpPrefab, dropPosition, Quaternion.identity);
         }
     }
 
@@ -183,5 +224,16 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
             CircleCollider2D circleCollider = gameObject.AddComponent<CircleCollider2D>();
             circleCollider.isTrigger = true;
         }
+    }
+
+    [System.Serializable]
+    public sealed class ExpDropOption
+    {
+        [SerializeField] private GameObject expPrefab;
+        [Range(0f, 1f)]
+        [SerializeField] private float dropChance = 1f;
+
+        public GameObject ExpPrefab => expPrefab;
+        public float DropChance => dropChance;
     }
 }
