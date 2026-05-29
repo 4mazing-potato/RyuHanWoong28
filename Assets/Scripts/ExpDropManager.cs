@@ -10,10 +10,12 @@ public class ExpDropManager : MonoBehaviour
 
     [SerializeField] private float magnetRange = 2.5f;
     [SerializeField] private Transform playerTarget;
+    [SerializeField] private PlayerExperience playerExperience;
     [SerializeField] private int totalExp;
 
     public float MagnetRange => Mathf.Max(0f, magnetRange);
     public Transform PlayerTarget => playerTarget;
+    public PlayerExperience PlayerExperience => playerExperience;
     public int TotalExp => totalExp;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -50,7 +52,7 @@ public class ExpDropManager : MonoBehaviour
 
     private void Update()
     {
-        if (playerTarget == null)
+        if (playerTarget == null || playerExperience == null)
         {
             FindPlayerTarget();
         }
@@ -64,11 +66,22 @@ public class ExpDropManager : MonoBehaviour
         }
 
         totalExp += expAmount;
+
+        if (playerExperience == null)
+        {
+            FindPlayerTarget();
+        }
+
+        if (playerExperience != null)
+        {
+            playerExperience.AddExp(expAmount);
+        }
     }
 
     private void FindPlayerTarget()
     {
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         playerTarget = player != null ? player.transform : null;
+        playerExperience = player != null ? player.GetComponent<PlayerExperience>() : null;
     }
 }
