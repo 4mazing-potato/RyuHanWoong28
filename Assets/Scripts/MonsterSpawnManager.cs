@@ -46,6 +46,11 @@ public class MonsterSpawnManager : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayPauseManager.IsPaused)
+        {
+            return;
+        }
+
         if (playerTarget == null)
         {
             FindPlayerTarget();

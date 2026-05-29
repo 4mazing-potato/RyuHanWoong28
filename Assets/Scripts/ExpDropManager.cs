@@ -60,7 +60,7 @@ public class ExpDropManager : MonoBehaviour
 
     public void AddExp(int expAmount)
     {
-        if (expAmount <= 0)
+        if (GameplayPauseManager.IsPaused || expAmount <= 0)
         {
             return;
         }

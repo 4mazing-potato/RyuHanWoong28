@@ -27,6 +27,11 @@ public class AutoShooter : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayPauseManager.IsPaused)
+        {
+            return;
+        }
+
         UpdateFireDirection();
 
         if (Time.time >= nextFireTime)
@@ -50,6 +55,36 @@ public class AutoShooter : MonoBehaviour
             lastInputDirection = newDirection;
             nextFireTime = Mathf.Max(nextFireTime, Time.time + Mathf.Max(0f, minTurnCooldown));
         }
+    }
+
+    public void IncreaseDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        damage += amount;
+    }
+
+    public void MultiplyFireInterval(float multiplier)
+    {
+        if (multiplier <= 0f)
+        {
+            return;
+        }
+
+        fireInterval = Mathf.Max(0.05f, fireInterval * multiplier);
+    }
+
+    public void IncreaseProjectileScale(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        scale += amount;
     }
 
     private void Fire()

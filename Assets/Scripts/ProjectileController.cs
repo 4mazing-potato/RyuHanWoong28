@@ -85,7 +85,7 @@ public class ProjectileController : MonoBehaviour
 
     private void TryDamageEnemy(GameObject target)
     {
-        if (hasHit || ShouldIgnoreTarget(target) || !IsEnemy(target))
+        if (GameplayPauseManager.IsPaused || hasHit || ShouldIgnoreTarget(target) || !IsEnemy(target))
         {
             return;
         }
