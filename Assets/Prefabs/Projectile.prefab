@@ -170,6 +170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileDamage: 3
-  speed: 8
+  speed: 10
   lifetime: 3
   scale: 1

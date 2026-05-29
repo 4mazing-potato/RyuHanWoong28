@@ -343,7 +343,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3351289361234567890, guid: d584fea26cb8aeb48ba18c02c8db6f2e, type: 3}
   spawnPoint: {fileID: 266284270}
   damage: 3
-  speed: 20
+  speed: 25
   lifetime: 5
   scale: 0.75
   fireInterval: 0.5
