@@ -8,13 +8,16 @@ public class ExpDropManager : MonoBehaviour
 
     public static ExpDropManager Instance { get; private set; }
 
-    [SerializeField] private float magnetRange = 2.5f;
+    [SerializeField] private float fallbackPickupRadius = 2.5f;
     [SerializeField] private Transform playerTarget;
+    [SerializeField] private PlayerStatus playerStatus;
     [SerializeField] private PlayerExperience playerExperience;
     [SerializeField] private int totalExp;
 
-    public float MagnetRange => Mathf.Max(0f, magnetRange);
+    public float PickupRadius => playerStatus != null ? playerStatus.CurrentPickupRadius : Mathf.Max(0f, fallbackPickupRadius);
+    public float MagnetRange => PickupRadius;
     public Transform PlayerTarget => playerTarget;
+    public PlayerStatus PlayerStatus => playerStatus;
     public PlayerExperience PlayerExperience => playerExperience;
     public int TotalExp => totalExp;
 
@@ -52,7 +55,7 @@ public class ExpDropManager : MonoBehaviour
 
     private void Update()
     {
-        if (playerTarget == null || playerExperience == null)
+        if (playerTarget == null || playerStatus == null || playerExperience == null)
         {
             FindPlayerTarget();
         }
@@ -82,6 +85,7 @@ public class ExpDropManager : MonoBehaviour
     {
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         playerTarget = player != null ? player.transform : null;
+        playerStatus = player != null ? player.GetComponent<PlayerStatus>() : null;
         playerExperience = player != null ? player.GetComponent<PlayerExperience>() : null;
     }
 }

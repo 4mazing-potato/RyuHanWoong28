@@ -12,8 +12,13 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] private float currentMaxHP = 10f;
     [SerializeField] private float currentHP = 10f;
 
+    [Header("Pickup")]
+    [SerializeField] private float basePickupRadius = 2.5f;
+    [SerializeField] private float currentPickupRadius = 2.5f;
+
     private float attackUpMultiplier = 1f;
     private float hpUpMultiplier = 1f;
+    private float pickupRadiusMultiplier = 1f;
     private float healOnDamagePercent;
     private bool healthInitialized;
 
@@ -22,6 +27,8 @@ public class PlayerStatus : MonoBehaviour
     public float BaseMaxHP => baseMaxHP;
     public float CurrentMaxHP => currentMaxHP;
     public float CurrentHP => currentHP;
+    public float BasePickupRadius => basePickupRadius;
+    public float CurrentPickupRadius => currentPickupRadius;
     public float HealOnDamagePercent => healOnDamagePercent;
 
     public event Action HealthChanged;
@@ -29,6 +36,7 @@ public class PlayerStatus : MonoBehaviour
     private void Awake()
     {
         RecalculateCurrentAttack();
+        RecalculateCurrentPickupRadius();
         InitializeHealthForBattle();
     }
 
@@ -38,13 +46,22 @@ public class PlayerStatus : MonoBehaviour
         baseMaxHP = Mathf.Max(1f, baseMaxHP);
         currentMaxHP = Mathf.Max(1f, currentMaxHP);
         currentHP = Mathf.Clamp(currentHP, 0f, currentMaxHP);
+        basePickupRadius = Mathf.Max(0f, basePickupRadius);
+        currentPickupRadius = Mathf.Max(0f, currentPickupRadius);
         RecalculateCurrentAttack();
+        RecalculateCurrentPickupRadius();
     }
 
     public void ApplyAttackUpPercent(float percentValue)
     {
         attackUpMultiplier = Mathf.Max(0f, percentValue) * 0.01f;
         RecalculateCurrentAttack();
+    }
+
+    public void ApplyPickupRadiusPercent(float percentValue)
+    {
+        pickupRadiusMultiplier = Mathf.Max(0f, percentValue) * 0.01f;
+        RecalculateCurrentPickupRadius();
     }
 
     public void InitializeHealthForBattle()
@@ -156,5 +173,10 @@ public class PlayerStatus : MonoBehaviour
     private void RecalculateCurrentAttack()
     {
         currentAttack = Mathf.Max(0f, baseAttack) * attackUpMultiplier;
+    }
+
+    private void RecalculateCurrentPickupRadius()
+    {
+        currentPickupRadius = Mathf.Max(0f, basePickupRadius) * pickupRadiusMultiplier;
     }
 }
