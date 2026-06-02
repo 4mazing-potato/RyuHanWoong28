@@ -33,10 +33,22 @@ public class PlayerHealth : MonoBehaviour
     private void Awake()
     {
         CacheReferences();
-        playerStatus.InitializeHealthForBattle();
+        if (playerStatus != null)
+        {
+            playerStatus.HealthChanged += UpdateHpBar;
+            playerStatus.InitializeHealthForBattle();
+        }
         EnsureCollisionComponents();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         UpdateHpBar();
+    }
+
+    private void OnDestroy()
+    {
+        if (playerStatus != null)
+        {
+            playerStatus.HealthChanged -= UpdateHpBar;
+        }
     }
 
     public bool TakeDamage(float damage)

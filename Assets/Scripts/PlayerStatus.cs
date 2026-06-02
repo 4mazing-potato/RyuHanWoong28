@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour
@@ -13,6 +14,7 @@ public class PlayerStatus : MonoBehaviour
 
     private float attackUpMultiplier = 1f;
     private float hpUpMultiplier = 1f;
+    private float healOnDamagePercent;
     private bool healthInitialized;
 
     public float BaseAttack => baseAttack;
@@ -20,6 +22,9 @@ public class PlayerStatus : MonoBehaviour
     public float BaseMaxHP => baseMaxHP;
     public float CurrentMaxHP => currentMaxHP;
     public float CurrentHP => currentHP;
+    public float HealOnDamagePercent => healOnDamagePercent;
+
+    public event Action HealthChanged;
 
     private void Awake()
     {
@@ -45,9 +50,11 @@ public class PlayerStatus : MonoBehaviour
     public void InitializeHealthForBattle()
     {
         hpUpMultiplier = 1f;
+        healOnDamagePercent = 0f;
         currentMaxHP = Mathf.Max(1f, baseMaxHP);
         currentHP = currentMaxHP;
         healthInitialized = true;
+        NotifyHealthChanged();
     }
 
     public void ApplyHPUpPercent(float percentValue)
@@ -57,6 +64,7 @@ public class PlayerStatus : MonoBehaviour
         hpUpMultiplier = Mathf.Max(0f, percentValue) * 0.01f;
         currentMaxHP = Mathf.Max(1f, baseMaxHP * hpUpMultiplier);
         currentHP = Mathf.Min(currentMaxHP, currentHP * hpUpMultiplier);
+        NotifyHealthChanged();
     }
 
     public bool TakeDamage(float damage)
@@ -69,6 +77,7 @@ public class PlayerStatus : MonoBehaviour
         }
 
         currentHP = Mathf.Max(0f, currentHP - damage);
+        NotifyHealthChanged();
         return true;
     }
 
@@ -82,6 +91,7 @@ public class PlayerStatus : MonoBehaviour
         }
 
         currentHP = Mathf.Min(currentMaxHP, currentHP + amount);
+        NotifyHealthChanged();
     }
 
     public void IncreaseMaxHP(float amount, bool healByIncreaseAmount = true)
@@ -95,6 +105,7 @@ public class PlayerStatus : MonoBehaviour
 
         currentMaxHP += amount;
         currentHP = healByIncreaseAmount ? Mathf.Min(currentMaxHP, currentHP + amount) : Mathf.Min(currentHP, currentMaxHP);
+        NotifyHealthChanged();
     }
 
     public void SetCurrentMaxHP(float newMaxHP, bool fillHp = false)
@@ -103,6 +114,25 @@ public class PlayerStatus : MonoBehaviour
 
         currentMaxHP = Mathf.Max(1f, newMaxHP);
         currentHP = fillHp ? currentMaxHP : Mathf.Min(currentHP, currentMaxHP);
+        NotifyHealthChanged();
+    }
+
+
+    public void SetHealOnDamagePercent(float percentValue)
+    {
+        healOnDamagePercent = Mathf.Max(0f, percentValue);
+    }
+
+    public void ApplyDealtDamageHeal(float appliedDamage)
+    {
+        EnsureHealthInitialized();
+
+        if (appliedDamage <= 0f || healOnDamagePercent <= 0f || currentHP <= 0f)
+        {
+            return;
+        }
+
+        Heal(appliedDamage * (healOnDamagePercent * 0.01f));
     }
 
     public float CalculateDamage(float damageMultiplier)
@@ -116,6 +146,11 @@ public class PlayerStatus : MonoBehaviour
         {
             InitializeHealthForBattle();
         }
+    }
+
+    private void NotifyHealthChanged()
+    {
+        HealthChanged?.Invoke();
     }
 
     private void RecalculateCurrentAttack()
