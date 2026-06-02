@@ -580,6 +580,7 @@ GameObject:
   - component: {fileID: 266284274}
   - component: {fileID: 266284275}
   - component: {fileID: 266284276}
+  - component: {fileID: 266284277}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -696,7 +697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b334d0628176454eb199887d203a82e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
+  moveSpeed: 10
   animator: {fileID: 266284268}
 --- !u!50 &266284272
 Rigidbody2D:
@@ -792,10 +793,47 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b8fa1d69b6a4f8d9c1e2a3b4c5d6e7f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   baseAttack: 3
   currentAttack: 3
+--- !u!70 &266284277
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.11654496, y: -0.15334868}
+  m_Size: {x: 1.9916878, y: 3.2920842}
+  m_Direction: 0
 --- !u!1 &432350254
 GameObject:
   m_ObjectHideFlags: 0
@@ -1063,7 +1101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030518, y: 460}
+  m_AnchoredPosition: {x: 0.000030518, y: 465.2}
   m_SizeDelta: {x: 1920, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &606868231
@@ -1223,9 +1261,6 @@ MonoBehaviour:
   cardOneButton: {fileID: 1249958716}
   cardTwoButton: {fileID: 1609161223}
   cardThreeButton: {fileID: 56762293}
-  damageBonus: 0
-  fireIntervalMultiplier: 1
-  projectileScaleBonus: 0
 --- !u!4 &960169482 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1670868026877558641, guid: 6f9f08bc916f76d468afe869a1e96281, type: 3}
