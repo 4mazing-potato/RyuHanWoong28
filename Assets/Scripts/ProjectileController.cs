@@ -20,6 +20,9 @@ public class ProjectileController : MonoBehaviour
     private Vector2 moveDirection = Vector2.right;
     private bool hasHit;
     private PlayerStatus ownerStatus;
+    private ProjectileSplitController splitController;
+    private SplashDamageController splashDamageController;
+    private bool canSplit = true;
 
     private void Awake()
     {
@@ -37,12 +40,20 @@ public class ProjectileController : MonoBehaviour
 
     public void Initialize(Vector2 direction, PlayerStatus ownerStatus, float projectileDamageMultiplier, float projectileSpeed, float projectileLifetime, float projectileScale)
     {
+        Initialize(direction, ownerStatus, projectileDamageMultiplier, projectileSpeed, projectileLifetime, projectileScale, true);
+    }
+
+    public void Initialize(Vector2 direction, PlayerStatus ownerStatus, float projectileDamageMultiplier, float projectileSpeed, float projectileLifetime, float projectileScale, bool canSplit)
+    {
         moveDirection = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
         this.ownerStatus = ownerStatus;
+        this.canSplit = canSplit;
+        hasHit = false;
         damageMultiplier = Mathf.Max(0f, projectileDamageMultiplier);
         speed = Mathf.Max(0f, projectileSpeed);
         lifetime = Mathf.Max(0.01f, projectileLifetime);
         scale = Mathf.Max(0.01f, projectileScale);
+        CacheOwnerSkillControllers();
 
         transform.localScale = Vector3.one * scale;
         ApplyRotation();
@@ -78,15 +89,17 @@ public class ProjectileController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        TryDamageEnemy(other.gameObject);
+        Vector3 hitPosition = other != null ? (Vector3)other.ClosestPoint(transform.position) : transform.position;
+        TryDamageEnemy(other != null ? other.gameObject : null, hitPosition);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        TryDamageEnemy(collision.gameObject);
+        Vector3 hitPosition = collision != null && collision.contactCount > 0 ? (Vector3)collision.GetContact(0).point : transform.position;
+        TryDamageEnemy(collision != null ? collision.gameObject : null, hitPosition);
     }
 
-    private void TryDamageEnemy(GameObject target)
+    private void TryDamageEnemy(GameObject target, Vector3 hitPosition)
     {
         if (GameplayPauseManager.IsPaused || hasHit || ShouldIgnoreTarget(target) || !IsEnemy(target))
         {
@@ -106,12 +119,51 @@ public class ProjectileController : MonoBehaviour
             target.SendMessageUpwards("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
         }
 
+        TryApplySplashDamage(hitPosition, damage);
+        TrySplitProjectile(hitPosition);
+
         Destroy(gameObject);
     }
 
     private float CalculateDamage()
     {
         return ownerStatus != null ? ownerStatus.CalculateDamage(damageMultiplier) : damageMultiplier;
+    }
+
+    private void TryApplySplashDamage(Vector3 hitPosition, float projectileDamage)
+    {
+        CacheOwnerSkillControllers();
+        if (splashDamageController != null)
+        {
+            splashDamageController.ApplySplashDamage(hitPosition, projectileDamage);
+        }
+    }
+
+    private void TrySplitProjectile(Vector3 hitPosition)
+    {
+        CacheOwnerSkillControllers();
+        if (canSplit && splitController != null)
+        {
+            splitController.SplitProjectile(this, hitPosition, ownerStatus, damageMultiplier, speed, lifetime, scale);
+        }
+    }
+
+    private void CacheOwnerSkillControllers()
+    {
+        if (ownerStatus == null)
+        {
+            return;
+        }
+
+        if (splitController == null)
+        {
+            splitController = ownerStatus.GetComponent<ProjectileSplitController>();
+        }
+
+        if (splashDamageController == null)
+        {
+            splashDamageController = ownerStatus.GetComponent<SplashDamageController>();
+        }
     }
 
     private bool ShouldIgnoreTarget(GameObject target)

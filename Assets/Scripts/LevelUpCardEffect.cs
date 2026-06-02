@@ -10,5 +10,7 @@ public enum LevelUpCardEffect
     IncreaseProjectileScale,
     FIRERING,
     EXPLOSION,
-    FIREGROUND
+    FIREGROUND,
+    PROJECTILESPLIT,
+    SPLASHDAMAGE
 }

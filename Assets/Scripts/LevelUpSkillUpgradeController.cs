@@ -41,6 +41,8 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private FireRingController playerFireRing;
     private ExplosionController playerExplosion;
     private FireGroundController playerFireGround;
+    private ProjectileSplitController playerProjectileSplit;
+    private SplashDamageController playerSplashDamage;
 
     public bool IsPanelOpen => isPanelOpen;
     public int PendingLevelUpCount => pendingLevelUpCount;
@@ -386,6 +388,22 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 }
 
                 break;
+            case LevelUpCardEffect.PROJECTILESPLIT:
+                ProjectileSplitController projectileSplit = GetPlayerProjectileSplit();
+                if (projectileSplit != null)
+                {
+                    projectileSplit.ApplyLevelUpCardValue(value);
+                }
+
+                break;
+            case LevelUpCardEffect.SPLASHDAMAGE:
+                SplashDamageController splashDamage = GetPlayerSplashDamage();
+                if (splashDamage != null)
+                {
+                    splashDamage.ApplyLevelUpCardValue(value);
+                }
+
+                break;
         }
     }
 
@@ -564,10 +582,53 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
         if (playerFireGround == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
-            playerFireGround = player != null ? player.GetComponent<FireGroundController>() : null;
+            if (player != null)
+            {
+                playerFireGround = player.GetComponent<FireGroundController>();
+                if (playerFireGround == null)
+                {
+                    playerFireGround = player.AddComponent<FireGroundController>();
+                }
+            }
         }
 
         return playerFireGround;
+    }
+
+    private ProjectileSplitController GetPlayerProjectileSplit()
+    {
+        if (playerProjectileSplit == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
+            if (player != null)
+            {
+                playerProjectileSplit = player.GetComponent<ProjectileSplitController>();
+                if (playerProjectileSplit == null)
+                {
+                    playerProjectileSplit = player.AddComponent<ProjectileSplitController>();
+                }
+            }
+        }
+
+        return playerProjectileSplit;
+    }
+
+    private SplashDamageController GetPlayerSplashDamage()
+    {
+        if (playerSplashDamage == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
+            if (player != null)
+            {
+                playerSplashDamage = player.GetComponent<SplashDamageController>();
+                if (playerSplashDamage == null)
+                {
+                    playerSplashDamage = player.AddComponent<SplashDamageController>();
+                }
+            }
+        }
+
+        return playerSplashDamage;
     }
 
     private ExplosionController GetPlayerExplosion()

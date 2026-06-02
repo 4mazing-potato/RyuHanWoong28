@@ -18,3 +18,12 @@
 17,1,,SkillExplosionIcon,사망한 몬스터가 10프로 확률로 폭발,EXPLOSION,10
 18,1,17,SkillExplosionIcon,사망한 몬스터가 20프로 확률로 폭발,EXPLOSION,20
 19,1,18,SkillExplosionIcon,사망한 몬스터가 30프로 확률로 폭발,EXPLOSION,30
+20,1,,FireRingIcon,플레이어 위치에 불장판 소환 1레벨,FIREGROUND,1
+21,1,20,FireRingIcon,불장판 소환 주기 감소 및 지름 증가 2레벨,FIREGROUND,2
+22,1,21,FireRingIcon,불장판 소환 주기 감소 및 지름 증가 3레벨,FIREGROUND,3
+23,1,,AttackUpgrade,투사체 적중 시 2개로 분열,PROJECTILESPLIT,1
+24,1,23,AttackUpgrade,투사체 적중 시 3개로 분열,PROJECTILESPLIT,2
+25,1,24,AttackUpgrade,투사체 적중 시 4개로 분열,PROJECTILESPLIT,3
+26,1,,SkillExplosionIcon,투사체 적중 시 스플래시 데미지 1레벨,SPLASHDAMAGE,1
+27,1,26,SkillExplosionIcon,스플래시 데미지와 범위 2레벨,SPLASHDAMAGE,2
+28,1,27,SkillExplosionIcon,스플래시 데미지와 범위 3레벨,SPLASHDAMAGE,3
