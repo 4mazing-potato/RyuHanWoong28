@@ -5,4 +5,5 @@
 4,30,1,AttackUpgrade,공격력 50프로 증가,ATKUP,150
 5,30,2,AttackUpgrade,공격 속도 증가,MultiplyFireInterval,0.9
 6,30,3,AttackUpgrade,투사체 크기 20프로 증가,IncreaseProjectileScale,0.2
-7,30,,AttackUpgrade,최대 체력 150프로 증가,HPUp,150
+7,30,,MaxHpUpgrade,최대 체력 25프로 증가,HPUp,125
+8,30,7,MaxHpUpgrade,최대 체력 50프로 증가,HPUp,150
