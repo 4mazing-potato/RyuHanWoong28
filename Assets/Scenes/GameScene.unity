@@ -758,8 +758,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f4b8dbb8a44210a2e389ec53a04b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHp: 20
-  currentHp: 20
   invincibleTime: 0.5
   blinkInterval: 0.1
   spriteRenderer: {fileID: 266284269}
@@ -797,6 +795,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseAttack: 3
   currentAttack: 3
+  baseMaxHP: 20
+  currentMaxHP: 20
+  currentHP: 20
 --- !u!70 &266284277
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
