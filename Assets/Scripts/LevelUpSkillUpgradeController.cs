@@ -327,6 +327,14 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 }
 
                 break;
+            case LevelUpCardEffect.MAGNET:
+                PlayerStatus magnetStatus = GetPlayerStatus();
+                if (magnetStatus != null)
+                {
+                    magnetStatus.ApplyPickupRadiusPercent(value);
+                }
+
+                break;
             case LevelUpCardEffect.IncreaseDamageMultiplier:
                 AutoShooter damageShooter = GetPlayerShooter();
                 if (damageShooter != null)

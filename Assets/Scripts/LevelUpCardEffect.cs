@@ -4,6 +4,7 @@ public enum LevelUpCardEffect
     ATKUP,
     HPUp,
     HEAL,
+    MAGNET,
     IncreaseDamageMultiplier,
     MultiplyFireInterval,
     IncreaseProjectileScale
