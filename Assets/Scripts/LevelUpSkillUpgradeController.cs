@@ -37,6 +37,7 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private bool isPanelOpen;
     private AutoShooter playerShooter;
     private PlayerStatus playerStatus;
+    private PlayerHealth playerHealth;
 
     public bool IsPanelOpen => isPanelOpen;
     public int PendingLevelUpCount => pendingLevelUpCount;
@@ -300,6 +301,19 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 }
 
                 break;
+            case LevelUpCardEffect.HPUp:
+                PlayerStatus hpStatus = GetPlayerStatus();
+                if (hpStatus != null)
+                {
+                    hpStatus.ApplyHPUpPercent(value);
+                    PlayerHealth health = GetPlayerHealth();
+                    if (health != null)
+                    {
+                        health.RefreshHealthView();
+                    }
+                }
+
+                break;
             case LevelUpCardEffect.IncreaseDamageMultiplier:
                 AutoShooter damageShooter = GetPlayerShooter();
                 if (damageShooter != null)
@@ -459,6 +473,18 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         playerShooter = player != null ? player.GetComponent<AutoShooter>() : null;
         return playerShooter;
+    }
+
+    private PlayerHealth GetPlayerHealth()
+    {
+        if (playerHealth != null)
+        {
+            return playerHealth;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
+        playerHealth = player != null ? player.GetComponent<PlayerHealth>() : null;
+        return playerHealth;
     }
 
     private PlayerStatus GetPlayerStatus()
