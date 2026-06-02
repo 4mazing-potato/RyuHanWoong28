@@ -581,6 +581,7 @@ GameObject:
   - component: {fileID: 266284274}
   - component: {fileID: 266284275}
   - component: {fileID: 266284276}
+  - component: {fileID: 266284278}
   - component: {fileID: 266284277}
   m_Layer: 10
   m_Name: Player
@@ -801,6 +802,23 @@ MonoBehaviour:
   currentHP: 20
   basePickupRadius: 2.5
   currentPickupRadius: 2.5
+--- !u!114 &266284278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b83b19fa5ece4b37a8f90aecc366dd8f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  orbitRadius: 6
+  orbitSpeed: 45
+  damageMultiplier: 1
+  damageCooldown: 0.35
+  fireOrbPrefab: {fileID: 5892467803181922497, guid: 86279712203a62841a5dfb3fdd4b03f2, type: 3}
 --- !u!70 &266284277
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

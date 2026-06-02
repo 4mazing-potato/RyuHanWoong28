@@ -38,6 +38,7 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
     private AutoShooter playerShooter;
     private PlayerStatus playerStatus;
     private PlayerHealth playerHealth;
+    private FireRingController playerFireRing;
 
     public bool IsPanelOpen => isPanelOpen;
     public int PendingLevelUpCount => pendingLevelUpCount;
@@ -359,6 +360,14 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 }
 
                 break;
+            case LevelUpCardEffect.FIRERING:
+                FireRingController fireRing = GetPlayerFireRing();
+                if (fireRing != null)
+                {
+                    fireRing.ApplyLevelUpCardValue(value);
+                }
+
+                break;
         }
     }
 
@@ -518,5 +527,17 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
         playerStatus = player != null ? player.GetComponent<PlayerStatus>() : null;
         return playerStatus;
+    }
+
+    private FireRingController GetPlayerFireRing()
+    {
+        if (playerFireRing != null)
+        {
+            return playerFireRing;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag(PlayerTag);
+        playerFireRing = player != null ? player.GetComponent<FireRingController>() : null;
+        return playerFireRing;
     }
 }
