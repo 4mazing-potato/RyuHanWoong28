@@ -249,7 +249,7 @@ public class FireRingController : MonoBehaviour
                 continue;
             }
 
-            int overlapCount = orbCollider.OverlapCollider(enemyContactFilter, overlapResults);
+            int overlapCount = orbCollider.Overlap(enemyContactFilter, overlapResults);
             for (int j = 0; j < overlapCount; j++)
             {
                 TryDamageEnemy(overlapResults[j], now);
