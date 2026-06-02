@@ -112,16 +112,31 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     public void TakeDamage(float damage)
     {
-        if (GameplayPauseManager.IsPaused || damage <= 0f)
+        TakeDamage(damage, null);
+    }
+
+    public float TakeDamage(float damage, PlayerStatus attackerStatus)
+    {
+        if (GameplayPauseManager.IsPaused || damage <= 0f || isDead)
         {
-            return;
+            return 0f;
         }
 
+        float previousHealth = currentHealth;
         currentHealth = Mathf.Max(0f, currentHealth - damage);
+        float appliedDamage = previousHealth - currentHealth;
+
+        if (appliedDamage > 0f)
+        {
+            DamageConfirmedEvent.RaisePlayerDamageDealt(attackerStatus, appliedDamage);
+        }
+
         if (currentHealth <= 0f)
         {
             Die();
         }
+
+        return appliedDamage;
     }
 
     private void Die()

@@ -306,10 +306,23 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 if (hpStatus != null)
                 {
                     hpStatus.ApplyHPUpPercent(value);
-                    PlayerHealth health = GetPlayerHealth();
-                    if (health != null)
+                    PlayerHealth hpHealth = GetPlayerHealth();
+                    if (hpHealth != null)
                     {
-                        health.RefreshHealthView();
+                        hpHealth.RefreshHealthView();
+                    }
+                }
+
+                break;
+            case LevelUpCardEffect.HEAL:
+                PlayerStatus healStatus = GetPlayerStatus();
+                if (healStatus != null)
+                {
+                    healStatus.SetHealOnDamagePercent(value);
+                    PlayerHealth healHealth = GetPlayerHealth();
+                    if (healHealth != null)
+                    {
+                        healHealth.RefreshHealthView();
                     }
                 }
 

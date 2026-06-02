@@ -95,14 +95,15 @@ public class ProjectileController : MonoBehaviour
 
         hasHit = true;
 
-        IProjectileDamageable damageable = target.GetComponentInParent<IProjectileDamageable>();
+        float damage = CalculateDamage();
+        IDamageable damageable = target.GetComponentInParent<IDamageable>();
         if (damageable != null)
         {
-            damageable.TakeDamage(CalculateDamage());
+            damageable.TakeDamage(damage, ownerStatus);
         }
         else
         {
-            target.SendMessageUpwards("TakeDamage", CalculateDamage(), SendMessageOptions.DontRequireReceiver);
+            target.SendMessageUpwards("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
         }
 
         Destroy(gameObject);
