@@ -422,8 +422,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 111de0c072804ac4aa7d4f6c46a5f7c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magnetRange: 5
+  fallbackPickupRadius: 2.5
   playerTarget: {fileID: 266284270}
+  playerStatus: {fileID: 0}
   playerExperience: {fileID: 266284275}
   totalExp: 0
 --- !u!1 &237589256
@@ -798,6 +799,8 @@ MonoBehaviour:
   baseMaxHP: 20
   currentMaxHP: 20
   currentHP: 20
+  basePickupRadius: 2.5
+  currentPickupRadius: 2.5
 --- !u!70 &266284277
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
