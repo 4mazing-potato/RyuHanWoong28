@@ -133,13 +133,13 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
         if (currentHealth <= 0f)
         {
-            Die();
+            Die(attackerStatus);
         }
 
         return appliedDamage;
     }
 
-    private void Die()
+    private void Die(PlayerStatus attackerStatus)
     {
         if (isDead)
         {
@@ -147,7 +147,9 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
         }
 
         isDead = true;
+        Vector3 deathPosition = transform.position;
         TryDropExpOrb();
+        MonsterDeathEvent.RaisePlayerKilledMonster(attackerStatus, deathPosition);
         Destroy(gameObject);
     }
 
