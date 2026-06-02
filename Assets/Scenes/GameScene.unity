@@ -583,6 +583,7 @@ GameObject:
   - component: {fileID: 266284276}
   - component: {fileID: 266284278}
   - component: {fileID: 266284277}
+  - component: {fileID: 266284279}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -819,6 +820,25 @@ MonoBehaviour:
   damageMultiplier: 1
   damageCooldown: 0.35
   fireOrbPrefab: {fileID: 5892467803181922497, guid: 86279712203a62841a5dfb3fdd4b03f2, type: 3}
+--- !u!114 &266284279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a7586a3b5f4b5d94d2ce491e9969e5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  explosionRadius: 2.5
+  affectsLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  damageMultiplier: 30
+  effectsPrefab: {fileID: 9048131169932818598, guid: 0683d4292f9598047a70a5c0457cd618, type: 3}
+  triggerChancePercent: 0
 --- !u!70 &266284277
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

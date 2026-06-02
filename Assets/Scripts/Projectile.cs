@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public interface IDamageable
 {
@@ -7,6 +8,21 @@ public interface IDamageable
 
 public interface IProjectileDamageable : IDamageable
 {
+}
+
+public static class MonsterDeathEvent
+{
+    public static event Action<PlayerStatus, Vector3> PlayerKilledMonster;
+
+    public static void RaisePlayerKilledMonster(PlayerStatus attackerStatus, Vector3 deathPosition)
+    {
+        if (attackerStatus == null)
+        {
+            return;
+        }
+
+        PlayerKilledMonster?.Invoke(attackerStatus, deathPosition);
+    }
 }
 
 public static class DamageConfirmedEvent
