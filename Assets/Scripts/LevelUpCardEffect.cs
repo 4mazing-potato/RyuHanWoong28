@@ -7,5 +7,6 @@ public enum LevelUpCardEffect
     MAGNET,
     IncreaseDamageMultiplier,
     MultiplyFireInterval,
-    IncreaseProjectileScale
+    IncreaseProjectileScale,
+    FIRERING
 }

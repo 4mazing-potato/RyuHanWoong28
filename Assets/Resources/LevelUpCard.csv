@@ -11,3 +11,4 @@
 10,30,4,MaxHpUpgrade,최대 체력 50프로 증가,HPUp,150
 11,30,5,HPGenUpgrade,공격 시 체력 회복,HEAL,30
 12,25,6,PickUpUpgrade,아이템 흡수 범위 100프로 증가,MAGNET,150
+13,20,,FireBall,플레이어 주변을 도는 불덩이 3개 생성,FIRERING,3
