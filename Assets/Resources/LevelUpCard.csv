@@ -7,3 +7,5 @@
 6,30,3,AttackUpgrade,투사체 크기 20프로 증가,IncreaseProjectileScale,0.2
 7,30,,MaxHpUpgrade,최대 체력 25프로 증가,HPUp,125
 8,30,7,MaxHpUpgrade,최대 체력 50프로 증가,HPUp,150
+9,30,,HPGenUpgrade,공격 시 체력 회복,HEAL,15
+10,30,9,HPGenUpgrade,공격 시 체력 회복,HEAL,30
