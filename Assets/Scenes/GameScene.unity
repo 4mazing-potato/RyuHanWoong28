@@ -584,6 +584,7 @@ GameObject:
   - component: {fileID: 266284278}
   - component: {fileID: 266284277}
   - component: {fileID: 266284279}
+  - component: {fileID: 266284280}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -876,6 +877,29 @@ MonoBehaviour:
   damageMultiplier: 30
   effectsPrefab: {fileID: 9048131169932818598, guid: 0683d4292f9598047a70a5c0457cd618, type: 3}
   triggerChancePercent: 0
+--- !u!114 &266284280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036f8ed44de41f44e539cb1cf43f3434, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  fireGroundPrefab: {fileID: 1662708028869522146, guid: bfd82203e131deb499d114b5e15ad82b, type: 3}
+  baseSpawnInterval: 2
+  intervalDecreasePerLevel: 0.25
+  minimumSpawnInterval: 0.25
+  duration: 1
+  baseDiameter: 3
+  diameterMultiplierPerLevel: 1.25
+  damage: 1
+  affectsLayers:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &432350254
 GameObject:
   m_ObjectHideFlags: 0

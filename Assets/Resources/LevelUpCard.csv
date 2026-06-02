@@ -18,3 +18,7 @@
 17,1,,SkillExplosionIcon,사망한 몬스터가 10프로 확률로 폭발,EXPLOSION,10
 18,1,17,SkillExplosionIcon,사망한 몬스터가 20프로 확률로 폭발,EXPLOSION,20
 19,1,18,SkillExplosionIcon,사망한 몬스터가 30프로 확률로 폭발,EXPLOSION,30
+20,1,,FireRingIcon,플레이어 위치에 2초마다 1초 지속 불장판 생성,FIREGROUND,1
+21,1,20,FireRingIcon,불장판 소환 주기 0.25초 감소 및 지름 1.25배 강화,FIREGROUND,2
+22,1,21,FireRingIcon,불장판 소환 주기 0.25초 추가 감소 및 지름 강화,FIREGROUND,3
+23,1,22,FireRingIcon,불장판 소환 주기 0.25초 추가 감소 및 지름 강화,FIREGROUND,4
