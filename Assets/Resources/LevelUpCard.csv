@@ -1,17 +1,20 @@
 ﻿ID,Ratio,Required,Icon,Desc,Effect,Value
-1,40,,AttackUpgrade,공격력 25프로 증가,ATKUP,125
-2,35,,AttackUpgrade,공격 속도 증가,MultiplyFireInterval,0.85
-3,25,,AttackUpgrade,투사체 크기 15프로 증가,IncreaseProjectileScale,0.15
-4,30,,MaxHpUpgrade,최대 체력 25프로 증가,HPUp,125
-5,30,,HPGenUpgrade,공격 시 체력 회복,HEAL,15
-6,25,,PickUpUpgrade,아이템 흡수 범위 50프로 증가,MAGNET,150
-7,30,1,AttackUpgrade,공격력 50프로 증가,ATKUP,150
-8,30,2,AttackUpgrade,공격 속도 증가,MultiplyFireInterval,0.9
-9,30,3,AttackUpgrade,투사체 크기 20프로 증가,IncreaseProjectileScale,0.2
-10,30,4,MaxHpUpgrade,최대 체력 50프로 증가,HPUp,150
-11,30,5,HPGenUpgrade,공격 시 체력 회복,HEAL,30
-12,25,6,PickUpUpgrade,아이템 흡수 범위 100프로 증가,MAGNET,150
-13,20,,FireRingIcon,플레이어 주변을 도는 불덩이 1개 생성,FIRERING,1
-14,20,13,FireRingIcon,플레이어 주변을 도는 불덩이 2개 생성,FIRERING,2
-15,20,14,FireRingIcon,플레이어 주변을 도는 불덩이 3개 생성,FIRERING,3
-16,20,15,FireRingIcon,플레이어 주변을 도는 불덩이 4개 생성,FIRERING,4
+1,1,,AttackUpgrade,공격력 25프로 증가,ATKUP,125
+2,1,,AttackUpgrade,공격 속도 증가,MultiplyFireInterval,0.85
+3,1,,AttackUpgrade,투사체 크기 15프로 증가,IncreaseProjectileScale,0.15
+4,1,,MaxHpUpgrade,최대 체력 25프로 증가,HPUp,125
+5,1,,HPGenUpgrade,공격 시 체력 회복,HEAL,15
+6,1,,PickUpUpgrade,아이템 흡수 범위 50프로 증가,MAGNET,150
+7,1,1,AttackUpgrade,공격력 50프로 증가,ATKUP,150
+8,1,2,AttackUpgrade,공격 속도 증가,MultiplyFireInterval,0.9
+9,1,3,AttackUpgrade,투사체 크기 20프로 증가,IncreaseProjectileScale,0.2
+10,1,4,MaxHpUpgrade,최대 체력 50프로 증가,HPUp,150
+11,1,5,HPGenUpgrade,공격 시 체력 회복,HEAL,30
+12,1,6,PickUpUpgrade,아이템 흡수 범위 100프로 증가,MAGNET,150
+13,1,,FireRingIcon,플레이어 주변을 도는 불덩이 1개 생성,FIRERING,1
+14,1,13,FireRingIcon,플레이어 주변을 도는 불덩이 2개 생성,FIRERING,2
+15,1,14,FireRingIcon,플레이어 주변을 도는 불덩이 3개 생성,FIRERING,3
+16,1,15,FireRingIcon,플레이어 주변을 도는 불덩이 4개 생성,FIRERING,4
+17,1,,SkillExplosionIcon,사망한 몬스터가 10프로 확률로 폭발,EXPLOSION,10
+18,1,17,SkillExplosionIcon,사망한 몬스터가 20프로 확률로 폭발,EXPLOSION,20
+19,1,18,SkillExplosionIcon,사망한 몬스터가 30프로 확률로 폭발,EXPLOSION,30
