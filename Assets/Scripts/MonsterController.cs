@@ -10,6 +10,7 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
     }
 
     private const string PlayerTag = "Player";
+    private const string PlayerLayerName = "Player";
     private const string EnemyLayerName = "Enemy";
 
     [SerializeField] private float moveSpeed = 2f;
@@ -181,16 +182,27 @@ public class MonsterController : MonoBehaviour, IProjectileDamageable
 
     private void TryDamagePlayer(GameObject targetObject)
     {
-        if (GameplayPauseManager.IsPaused || targetObject == null)
+        if (GameplayPauseManager.IsPaused || targetObject == null || !IsPlayerBody(targetObject))
         {
             return;
         }
 
-        PlayerHealth playerHealth = targetObject.GetComponentInParent<PlayerHealth>();
-        if (playerHealth != null && playerHealth.CompareTag(PlayerTag))
+        PlayerHealth playerHealth = targetObject.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
         {
             playerHealth.TakeDamage(attackDamage);
         }
+    }
+
+    private static bool IsPlayerBody(GameObject targetObject)
+    {
+        if (targetObject.CompareTag(PlayerTag))
+        {
+            return true;
+        }
+
+        int playerLayer = LayerMask.NameToLayer(PlayerLayerName);
+        return playerLayer >= 0 && targetObject.layer == playerLayer;
     }
 
     private void FindPlayerTarget()
