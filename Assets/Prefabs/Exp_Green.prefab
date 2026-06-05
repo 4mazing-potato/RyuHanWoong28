@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7777777777777777777}
   m_Layer: 0
   m_Name: Exp_Green
-  m_TagString: MagentCollectible
+  m_TagString: MagnetCollectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
