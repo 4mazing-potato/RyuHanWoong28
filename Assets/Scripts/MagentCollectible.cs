@@ -9,7 +9,7 @@ public interface IMagentCollectible
 
 public abstract class MagentCollectible : MonoBehaviour, IMagentCollectible
 {
-    private const string CollectibleTag = "MagentCollectible";
+    private const string CollectibleTag = "MagnetCollectible";
 
     [Header("Magnet Collectible")]
     [SerializeField] private float moveSpeed = 10f;
@@ -33,23 +33,35 @@ public abstract class MagentCollectible : MonoBehaviour, IMagentCollectible
             return;
         }
 
+        MagnetBoostController magnetBoost = MagnetBoostController.ActiveInstance;
+        bool isBoosted = magnetBoost != null && magnetBoost.IsBoostActive && magnetBoost.Collector != null;
+        Transform collector = isBoosted ? magnetBoost.Collector : null;
+        float speedMultiplier = isBoosted ? magnetBoost.BoostSpeedMultiplier : 1f;
+
         ExpDropManager dropManager = ExpDropManager.Instance;
-        if (dropManager == null || dropManager.PlayerTarget == null)
+        if (!isBoosted)
         {
-            return;
+            if (dropManager == null || dropManager.PlayerTarget == null)
+            {
+                return;
+            }
+
+            collector = dropManager.PlayerTarget;
         }
 
-        Transform collector = dropManager.PlayerTarget;
         Vector3 collectorPosition = collector.position;
         collectorPosition.z = transform.position.z;
 
-        float pickupRadius = dropManager.PickupRadius;
-        if ((collectorPosition - transform.position).sqrMagnitude > pickupRadius * pickupRadius)
+        if (!isBoosted)
         {
-            return;
+            float pickupRadius = dropManager.PickupRadius;
+            if ((collectorPosition - transform.position).sqrMagnitude > pickupRadius * pickupRadius)
+            {
+                return;
+            }
         }
 
-        MoveTowardCollector(collector, Time.deltaTime);
+        MoveTowardCollector(collector, Time.deltaTime, speedMultiplier);
 
         if ((collectorPosition - transform.position).sqrMagnitude <= CollectDistance * CollectDistance)
         {
@@ -59,6 +71,11 @@ public abstract class MagentCollectible : MonoBehaviour, IMagentCollectible
 
     public virtual void MoveTowardCollector(Transform collector, float deltaTime)
     {
+        MoveTowardCollector(collector, deltaTime, 1f);
+    }
+
+    public virtual void MoveTowardCollector(Transform collector, float deltaTime, float speedMultiplier)
+    {
         if (collector == null)
         {
             return;
@@ -66,7 +83,8 @@ public abstract class MagentCollectible : MonoBehaviour, IMagentCollectible
 
         Vector3 collectorPosition = collector.position;
         collectorPosition.z = transform.position.z;
-        transform.position = Vector3.MoveTowards(transform.position, collectorPosition, MoveSpeed * Mathf.Max(0f, deltaTime));
+        float boostedSpeed = MoveSpeed * Mathf.Max(0f, speedMultiplier);
+        transform.position = Vector3.MoveTowards(transform.position, collectorPosition, boostedSpeed * Mathf.Max(0f, deltaTime));
     }
 
     public void Collect(Transform collector)

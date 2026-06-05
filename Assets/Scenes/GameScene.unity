@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 266284279}
   - component: {fileID: 266284280}
   - component: {fileID: 266284281}
+  - component: {fileID: 266284282}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -922,6 +923,20 @@ MonoBehaviour:
   splashEffectPrefab: {fileID: 636483812879349234, guid: 1be9ce26f5fa75c4ca80643fc8e65254, type: 3}
   effectLifetime: 0.35
   scaleEffectToDiameter: 1
+--- !u!114 &266284282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266284267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7de8e314cb2e48249a5cd7b0b0c7d6a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boostDuration: 5
+  boostSpeedMultiplier: 3
 --- !u!1 &432350254
 GameObject:
   m_ObjectHideFlags: 0

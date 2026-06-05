@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 5173078857154547947}
   - component: {fileID: 7513925489907630367}
   - component: {fileID: 4238730617712750640}
+  - component: {fileID: 5839412276841209123}
   m_Layer: 0
   m_Name: SuperMagnet
-  m_TagString: MagentCollectible
+  m_TagString: MagnetCollectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,3 +157,17 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.045759477, y: 0}
   m_Radius: 2.5665686
+--- !u!114 &5839412276841209123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476473716985759427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f9b321c86d34783a3cc557315e4b28f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 10
+  collectDistance: 0.15
