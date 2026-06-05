@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4863328118046919645}
   - component: {fileID: 6773895324966019792}
   - component: {fileID: 4400957413978056431}
+  - component: {fileID: 5512349876543210001}
   m_Layer: 0
   m_Name: Potion
   m_TagString: MagentCollectible
@@ -156,3 +157,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 2.852384
+--- !u!114 &5512349876543210001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2465123361083334762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e3193fe61d45d4bd99728cd3ebbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 10
+  collectDistance: 0.15
+  healValue: 10
