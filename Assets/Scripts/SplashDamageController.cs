@@ -118,13 +118,13 @@ public class SplashDamageController : MonoBehaviour
 
     private void SpawnSplashEffect(Vector3 hitPosition, float currentDiameter)
     {
-        GameObject prefab = splashEffectPrefab != null ? splashEffectPrefab : Resources.Load<GameObject>("SplashDamage");
-        if (prefab == null)
+        if (splashEffectPrefab == null)
         {
+            Debug.LogWarning($"{nameof(SplashDamageController)} on {name} requires a splash effect prefab assigned in the Inspector.", this);
             return;
         }
 
-        GameObject effectObject = Instantiate(prefab, hitPosition, Quaternion.identity);
+        GameObject effectObject = Instantiate(splashEffectPrefab, hitPosition, Quaternion.identity);
         if (scaleEffectToDiameter)
         {
             ScaleEffectToDiameter(effectObject, currentDiameter);
