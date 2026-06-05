@@ -90,16 +90,16 @@ public class ProjectileController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         Vector3 hitPosition = other != null ? (Vector3)other.ClosestPoint(transform.position) : transform.position;
-        TryDamageEnemy(other != null ? other.gameObject : null, hitPosition);
+        TryDamageEnemy(other != null ? other.gameObject : null, other, hitPosition);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Vector3 hitPosition = collision != null && collision.contactCount > 0 ? (Vector3)collision.GetContact(0).point : transform.position;
-        TryDamageEnemy(collision != null ? collision.gameObject : null, hitPosition);
+        TryDamageEnemy(collision != null ? collision.gameObject : null, collision != null ? collision.collider : null, hitPosition);
     }
 
-    private void TryDamageEnemy(GameObject target, Vector3 hitPosition)
+    private void TryDamageEnemy(GameObject target, Collider2D hitCollider, Vector3 hitPosition)
     {
         if (GameplayPauseManager.IsPaused || hasHit || ShouldIgnoreTarget(target) || !IsEnemy(target))
         {
@@ -119,7 +119,7 @@ public class ProjectileController : MonoBehaviour
             target.SendMessageUpwards("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
         }
 
-        TryApplySplashDamage(hitPosition, damage);
+        TryApplySplashDamage(hitPosition, damage, hitCollider, damageable);
         TrySplitProjectile(hitPosition);
 
         Destroy(gameObject);
@@ -130,12 +130,12 @@ public class ProjectileController : MonoBehaviour
         return ownerStatus != null ? ownerStatus.CalculateDamage(damageMultiplier) : damageMultiplier;
     }
 
-    private void TryApplySplashDamage(Vector3 hitPosition, float projectileDamage)
+    private void TryApplySplashDamage(Vector3 hitPosition, float projectileDamage, Collider2D directHitCollider, IDamageable directHitDamageable)
     {
         CacheOwnerSkillControllers();
         if (splashDamageController != null)
         {
-            splashDamageController.ApplySplashDamage(hitPosition, projectileDamage);
+            splashDamageController.ApplySplashDamage(hitPosition, projectileDamage, directHitCollider, directHitDamageable);
         }
     }
 
