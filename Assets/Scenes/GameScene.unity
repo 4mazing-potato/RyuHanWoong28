@@ -802,8 +802,8 @@ MonoBehaviour:
   baseMaxHP: 20
   currentMaxHP: 20
   currentHP: 20
-  basePickupRadius: 10
-  currentPickupRadius: 10
+  basePickupRadius: 5
+  currentPickupRadius: 5
 --- !u!70 &266284277
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -893,8 +893,8 @@ MonoBehaviour:
   baseSpawnInterval: 2
   intervalDecreasePerLevel: 0.25
   minimumSpawnInterval: 0.25
-  duration: 1
-  baseDiameter: 3
+  duration: 2
+  baseDiameter: 10
   diameterMultiplierPerLevel: 1.25
   damage: 1
   affectsLayers:

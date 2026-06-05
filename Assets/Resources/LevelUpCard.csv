@@ -25,5 +25,5 @@
 24,1,23,ProjectileSplitIcon,투사체 적중 시 3개로 분열,PROJECTILESPLIT,2
 25,1,24,ProjectileSplitIcon,투사체 적중 시 4개로 분열,PROJECTILESPLIT,3
 26,1,,SplashDamageIcon,투사체 적중 시 스플래시 데미지,SPLASHDAMAGE,1
-27,1,,SplashDamageIcon,투사체 적중 시 스플래시 데미지,SPLASHDAMAGE,2
-28,1,,SplashDamageIcon,투사체 적중 시 스플래시 데미지,SPLASHDAMAGE,3
+27,1,26,SplashDamageIcon,투사체 적중 시 스플래시 데미지,SPLASHDAMAGE,2
+28,1,27,SplashDamageIcon,투사체 적중 시 스플래시 데미지,SPLASHDAMAGE,3
