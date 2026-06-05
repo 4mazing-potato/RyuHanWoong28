@@ -623,7 +623,7 @@ public class LevelUpSkillUpgradeController : MonoBehaviour
                 playerSplashDamage = player.GetComponent<SplashDamageController>();
                 if (playerSplashDamage == null)
                 {
-                    playerSplashDamage = player.AddComponent<SplashDamageController>();
+                    Debug.LogWarning($"{nameof(SplashDamageController)} must be added to the Player and configured in the Inspector.", player);
                 }
             }
         }
