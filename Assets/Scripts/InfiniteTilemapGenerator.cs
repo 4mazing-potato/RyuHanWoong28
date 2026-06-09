@@ -17,6 +17,8 @@ public class InfiniteTilemapGenerator : MonoBehaviour
 
     private void Awake()
     {
+        ApplySelectedStageTilemap();
+
         if (targetCamera == null)
         {
             targetCamera = Camera.main;
@@ -34,6 +36,27 @@ public class InfiniteTilemapGenerator : MonoBehaviour
     private void LateUpdate()
     {
         UpdateChunksAroundCamera();
+    }
+
+    private void ApplySelectedStageTilemap()
+    {
+        int stageId = StageSelection.HasSelectedStage ? StageSelection.SelectedStageId : 1;
+        StageData stage = StageTable.GetStage(stageId);
+        Transform selectedTilemap = transform.Find(stage.Tilemap);
+        if (selectedTilemap == null)
+        {
+            Debug.LogWarning($"Tilemap '{stage.Tilemap}' for StageId {stageId} was not found under {name}.", this);
+            return;
+        }
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            child.gameObject.SetActive(child == selectedTilemap);
+        }
+
+        seedTilemap = selectedTilemap;
+        tilemapPrefab = selectedTilemap.gameObject;
     }
 
     private void CacheChunkSize()

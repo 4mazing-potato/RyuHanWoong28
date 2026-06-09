@@ -6,7 +6,7 @@ using UnityEngine;
 public static class StageTable
 {
     private const string ResourcePath = "Stage";
-    private const int ExpectedColumnCount = 3;
+    private const int ExpectedColumnCount = 5;
 
     private static IReadOnlyList<StageData> cachedStages;
     private static IReadOnlyDictionary<int, StageData> cachedStagesById;
@@ -74,7 +74,7 @@ public static class StageTable
             string[] columns = line.Split(',');
             if (columns.Length < ExpectedColumnCount)
             {
-                throw new FormatException($"Invalid {ResourcePath}.csv row at line {i + 1}: expected StageId,Tilemap,Time.");
+                throw new FormatException($"Invalid {ResourcePath}.csv row at line {i + 1}: expected StageId,Tilemap,Time,Image,Name.");
             }
 
             int stageId = int.Parse(columns[0].Trim(), CultureInfo.InvariantCulture);
@@ -89,7 +89,19 @@ public static class StageTable
                 throw new FormatException($"Invalid {ResourcePath}.csv row at line {i + 1}: Time must be a number greater than or equal to 0.");
             }
 
-            StageData stage = new StageData(stageId, tilemap, time);
+            string image = columns[3].Trim();
+            if (string.IsNullOrEmpty(image))
+            {
+                throw new FormatException($"Invalid {ResourcePath}.csv row at line {i + 1}: Image is empty.");
+            }
+
+            string name = columns[4].Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new FormatException($"Invalid {ResourcePath}.csv row at line {i + 1}: Name is empty.");
+            }
+
+            StageData stage = new StageData(stageId, tilemap, time, image, name);
             if (stagesById.ContainsKey(stageId))
             {
                 throw new FormatException($"Duplicate StageId {stageId} found in {ResourcePath}.csv.");
