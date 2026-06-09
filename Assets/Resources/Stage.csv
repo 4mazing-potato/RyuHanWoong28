@@ -1,2 +1,3 @@
-StageId,Tilemap,Time
-1,Tilemap1,300
+StageId,Tilemap,Time,Image,Name
+1,Tilemap1,30,Stage1,ÃÊ¿ø
+2,Tilemap2,30,Stage2,ÆóÇã
