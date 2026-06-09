@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  maxHP: 3
+  maxHP: 5
   attackDamage: 1
   spriteRenderer: {fileID: 8333917415496626051}
   spriteFacingDirection: 0
