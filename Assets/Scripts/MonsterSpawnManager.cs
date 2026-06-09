@@ -52,6 +52,8 @@ public class MonsterSpawnManager : MonoBehaviour
 
     private void Awake()
     {
+        ApplySelectedStage();
+
         if (targetCamera == null)
         {
             targetCamera = Camera.main;
@@ -113,8 +115,17 @@ public class MonsterSpawnManager : MonoBehaviour
         ruleStates[ruleIndex].AliveCount = Mathf.Max(0, ruleStates[ruleIndex].AliveCount - 1);
     }
 
+    private void ApplySelectedStage()
+    {
+        if (StageSelection.HasSelectedStage)
+        {
+            currentStageId = StageSelection.SelectedStageId;
+        }
+    }
+
     private void LoadStageSpawnRules()
     {
+        ApplySelectedStage();
         StageData stage = StageTable.GetStage(currentStageId);
         remainingStageTime = Mathf.Max(0f, stage.Time);
         stageCompleted = false;
