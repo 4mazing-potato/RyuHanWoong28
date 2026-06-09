@@ -27,10 +27,14 @@ public class MonsterSpawnManager : MonoBehaviour
     private float stageStartTime;
     private float remainingStageTime;
     private bool stageCompleted;
+    private bool stageSucceeded;
+    private bool stageFailed;
 
     public int CurrentStageId => currentStageId;
     public float RemainingStageTime => remainingStageTime;
     public bool StageCompleted => stageCompleted;
+    public bool StageSucceeded => stageSucceeded;
+    public bool StageFailed => stageFailed;
     public UnityEvent OnStageSucceeded => onStageSucceeded;
     public UnityEvent OnStageFailed => onStageFailed;
 
@@ -114,6 +118,8 @@ public class MonsterSpawnManager : MonoBehaviour
         StageData stage = StageTable.GetStage(currentStageId);
         remainingStageTime = Mathf.Max(0f, stage.Time);
         stageCompleted = false;
+        stageSucceeded = false;
+        stageFailed = false;
 
         IReadOnlyList<StageMonsterData> rows = StageMonsterTable.GetRowsForStage(currentStageId);
 
@@ -174,9 +180,7 @@ public class MonsterSpawnManager : MonoBehaviour
         }
 
         remainingStageTime = 0f;
-        stageCompleted = true;
-        UpdateTimerText();
-        onStageSucceeded?.Invoke();
+        CompleteStage(true);
     }
 
     private void TriggerStageFailure()
@@ -186,9 +190,25 @@ public class MonsterSpawnManager : MonoBehaviour
             return;
         }
 
+        CompleteStage(false);
+    }
+
+    private void CompleteStage(bool succeeded)
+    {
         stageCompleted = true;
+        stageSucceeded = succeeded;
+        stageFailed = !succeeded;
         UpdateTimerText();
-        onStageFailed?.Invoke();
+        GameplayPauseManager.RequestPause();
+
+        if (succeeded)
+        {
+            onStageSucceeded?.Invoke();
+        }
+        else
+        {
+            onStageFailed?.Invoke();
+        }
     }
 
     private void HandlePlayerDied()
