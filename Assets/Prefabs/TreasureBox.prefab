@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4953188104195619039}
   - component: {fileID: 5318569017905758639}
   - component: {fileID: 8046389086987012820}
+  - component: {fileID: 7003289428912345678}
   m_Layer: 8
   m_Name: TreasureBox
   m_TagString: Untagged
@@ -166,3 +167,23 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 5.6135106, y: 4.607751}
   m_EdgeRadius: 0
+--- !u!114 &7003289428912345678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875565536050003616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe1e15766fa460395a7e8537382c8ed, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TreasureBoxController
+  maxHP: 10
+  dropOptions:
+  - dropPrefab: {fileID: 5619336733620520957, guid: 2f6f599acd00bc842bdfc2cf0b3c1b9d, type: 3}
+    chance: 0.6
+  - dropPrefab: {fileID: 2476473716985759427, guid: 3e176e828dfd06444b40e5d44704a040, type: 3}
+    chance: 0.15
+  - dropPrefab: {fileID: 2465123361083334762, guid: b7512b1a8696b934db228934b791715d, type: 3}
+    chance: 0.25
