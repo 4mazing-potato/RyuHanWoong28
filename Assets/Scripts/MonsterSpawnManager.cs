@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class MonsterSpawnManager : MonoBehaviour
 {
     private const string GameSceneName = "GameScene";
     private const string PlayerTag = "Player";
+    private const string TimerTextObjectName = "Txt_Time";
 
     [SerializeField] private int currentStageId = 1;
     [SerializeField] private Camera targetCamera;
@@ -14,8 +17,22 @@ public class MonsterSpawnManager : MonoBehaviour
     [SerializeField] private float spawnRadiusRandomRange = 2f;
     [SerializeField] private float spawnZ = 0f;
 
+    [Header("Stage Timer")]
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private UnityEvent onStageSucceeded = new UnityEvent();
+    [SerializeField] private UnityEvent onStageFailed = new UnityEvent();
+
     private readonly List<SpawnRuleState> ruleStates = new List<SpawnRuleState>();
     private float stageStartTime;
+    private float remainingStageTime;
+    private bool stageCompleted;
+
+    public int CurrentStageId => currentStageId;
+    public float RemainingStageTime => remainingStageTime;
+    public bool StageCompleted => stageCompleted;
+    public UnityEvent OnStageSucceeded => onStageSucceeded;
+    public UnityEvent OnStageFailed => onStageFailed;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapForGameScene()
@@ -37,16 +54,31 @@ public class MonsterSpawnManager : MonoBehaviour
         }
 
         FindPlayerTarget();
+        FindTimerText();
+        FindPlayerHealth();
     }
 
     private void Start()
     {
         LoadStageSpawnRules();
+        RegisterPlayerDeathHandler();
+        UpdateTimerText();
+
+        if (remainingStageTime <= 0f)
+        {
+            TriggerStageSuccess();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UnregisterPlayerDeathHandler();
     }
 
     private void Update()
     {
-        if (GameplayPauseManager.IsPaused)
+        UpdateStageTimer();
+        if (stageCompleted || GameplayPauseManager.IsPaused)
         {
             return;
         }
@@ -79,7 +111,10 @@ public class MonsterSpawnManager : MonoBehaviour
 
     private void LoadStageSpawnRules()
     {
-        StageTable.GetStage(currentStageId);
+        StageData stage = StageTable.GetStage(currentStageId);
+        remainingStageTime = Mathf.Max(0f, stage.Time);
+        stageCompleted = false;
+
         IReadOnlyList<StageMonsterData> rows = StageMonsterTable.GetRowsForStage(currentStageId);
 
         ruleStates.Clear();
@@ -96,6 +131,118 @@ public class MonsterSpawnManager : MonoBehaviour
         }
 
         stageStartTime = Time.time;
+    }
+
+    private void UpdateStageTimer()
+    {
+        if (stageCompleted)
+        {
+            return;
+        }
+
+        if (!GameplayPauseManager.IsPaused)
+        {
+            remainingStageTime = Mathf.Max(0f, remainingStageTime - Time.deltaTime);
+        }
+
+        UpdateTimerText();
+
+        if (remainingStageTime <= 0f)
+        {
+            TriggerStageSuccess();
+        }
+    }
+
+    private void UpdateTimerText()
+    {
+        if (timeText == null)
+        {
+            return;
+        }
+
+        int totalSeconds = Mathf.Max(0, Mathf.CeilToInt(remainingStageTime));
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        timeText.text = $"{minutes:00}:{seconds:00}";
+    }
+
+    private void TriggerStageSuccess()
+    {
+        if (stageCompleted)
+        {
+            return;
+        }
+
+        remainingStageTime = 0f;
+        stageCompleted = true;
+        UpdateTimerText();
+        onStageSucceeded?.Invoke();
+    }
+
+    private void TriggerStageFailure()
+    {
+        if (stageCompleted || remainingStageTime <= 0f)
+        {
+            return;
+        }
+
+        stageCompleted = true;
+        UpdateTimerText();
+        onStageFailed?.Invoke();
+    }
+
+    private void HandlePlayerDied()
+    {
+        TriggerStageFailure();
+    }
+
+    private void RegisterPlayerDeathHandler()
+    {
+        FindPlayerHealth();
+        if (playerHealth != null)
+        {
+            playerHealth.OnDied.AddListener(HandlePlayerDied);
+        }
+    }
+
+    private void UnregisterPlayerDeathHandler()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnDied.RemoveListener(HandlePlayerDied);
+        }
+    }
+
+    private void FindTimerText()
+    {
+        if (timeText != null)
+        {
+            return;
+        }
+
+        GameObject timerObject = GameObject.Find(TimerTextObjectName);
+        if (timerObject != null)
+        {
+            timeText = timerObject.GetComponent<TMP_Text>();
+        }
+    }
+
+    private void FindPlayerHealth()
+    {
+        if (playerHealth != null)
+        {
+            return;
+        }
+
+        if (playerTarget != null)
+        {
+            playerHealth = playerTarget.GetComponent<PlayerHealth>();
+        }
+
+        if (playerHealth == null)
+        {
+            playerHealth = FindObjectOfType<PlayerHealth>();
+        }
     }
 
     private void UpdateRule(SpawnRuleState state, float elapsedSec)
