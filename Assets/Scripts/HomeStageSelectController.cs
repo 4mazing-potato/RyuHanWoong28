@@ -87,8 +87,8 @@ public class HomeStageSelectController : MonoBehaviour
         }
 
         gameStartPanel = FindSceneGameObject(GameStartPanelName);
-        closeButton = FindButton(CloseButtonName);
-        GameObject contentObject = FindSceneGameObject(ContentName);
+        closeButton = FindButtonInGameStartPanel(CloseButtonName) ?? FindButton(CloseButtonName);
+        GameObject contentObject = FindGameStartPanelChild(ContentName) ?? FindSceneGameObject(ContentName);
         contentRoot = contentObject != null ? contentObject.transform : null;
         stageButtonTemplate = FindStageButtonTemplate();
     }
@@ -229,25 +229,40 @@ public class HomeStageSelectController : MonoBehaviour
 
     private GameObject FindStageButtonTemplate()
     {
-        if (contentRoot != null)
+        GameObject template = FindStageButtonTemplateIn(contentRoot);
+        if (template != null)
         {
-            Transform directChild = contentRoot.Find(StageButtonName);
-            if (directChild != null)
-            {
-                return directChild.gameObject;
-            }
+            return template;
+        }
 
-            for (int i = 0; i < contentRoot.childCount; i++)
+        Transform panelTransform = gameStartPanel != null ? gameStartPanel.transform : null;
+        Transform panelStageButton = FindChild(panelTransform, StageButtonName);
+        return panelStageButton != null ? panelStageButton.gameObject : FindSceneGameObject(StageButtonName);
+    }
+
+    private static GameObject FindStageButtonTemplateIn(Transform root)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+
+        Transform directChild = root.Find(StageButtonName);
+        if (directChild != null)
+        {
+            return directChild.gameObject;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (child.name.StartsWith(StageButtonName, StringComparison.Ordinal))
             {
-                Transform child = contentRoot.GetChild(i);
-                if (child.name.StartsWith(StageButtonName, StringComparison.Ordinal))
-                {
-                    return child.gameObject;
-                }
+                return child.gameObject;
             }
         }
 
-        return FindSceneGameObject(StageButtonName);
+        return null;
     }
 
     private static Sprite LoadStageSprite(string imageName)
@@ -266,6 +281,19 @@ public class HomeStageSelectController : MonoBehaviour
 
         StageSpriteCatalog catalog = Resources.Load<StageSpriteCatalog>(StageSpriteCatalogPath);
         return catalog != null && catalog.TryGetSprite(trimmedName, out sprite) ? sprite : null;
+    }
+
+    private Button FindButtonInGameStartPanel(string objectName)
+    {
+        GameObject gameObject = FindGameStartPanelChild(objectName);
+        return gameObject != null ? gameObject.GetComponent<Button>() : null;
+    }
+
+    private GameObject FindGameStartPanelChild(string objectName)
+    {
+        Transform panelTransform = gameStartPanel != null ? gameStartPanel.transform : null;
+        Transform child = FindChild(panelTransform, objectName);
+        return child != null ? child.gameObject : null;
     }
 
     private static Button FindButton(string objectName)
