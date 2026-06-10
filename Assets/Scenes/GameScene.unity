@@ -2987,8 +2987,8 @@ MonoBehaviour:
   spawnOutsideMargin: 1.5
   spawnRadiusRandomRange: 2
   spawnZ: 0
-  timeText: {fileID: 0}
-  playerHealth: {fileID: 0}
+  timeText: {fileID: 66230909}
+  playerHealth: {fileID: 266284274}
   onStageSucceeded:
     m_PersistentCalls:
       m_Calls: []
@@ -3297,6 +3297,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716955010}
   m_CullTransparentMesh: 1
+--- !u!1 &1797791528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1797791530}
+  - component: {fileID: 1797791529}
+  m_Layer: 0
+  m_Name: StageResultController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1797791529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797791528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93562b73440946bd975fbb51629f9e2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageResultController
+  resultHud: {fileID: 241508313}
+  successImage: {fileID: 1422871152}
+  failImage: {fileID: 1928464416}
+  homeButton: {fileID: 659695721}
+  monsterSpawnManager: {fileID: 1579614554}
+--- !u!4 &1797791530
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797791528}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 797.6004, y: 384.81512, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1873212376
 GameObject:
   m_ObjectHideFlags: 0
@@ -3695,3 +3744,4 @@ SceneRoots:
   - {fileID: 771034946}
   - {fileID: 2001100002}
   - {fileID: 241508317}
+  - {fileID: 1797791530}
