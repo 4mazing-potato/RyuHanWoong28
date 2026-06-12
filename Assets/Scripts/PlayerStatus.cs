@@ -166,7 +166,7 @@ public class PlayerStatus : MonoBehaviour
     public float CalculateDamage(float damageMultiplier)
     {
         float damage = currentAttack * Mathf.Max(0f, damageMultiplier);
-        if (criticalChancePermyriad > 0 && Random.Range(0, 10000) < criticalChancePermyriad)
+        if (criticalChancePermyriad > 0 && UnityEngine.Random.Range(0, 10000) < criticalChancePermyriad)
         {
             damage *= 2f;
         }
