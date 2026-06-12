@@ -182,7 +182,7 @@ MonoBehaviour:
   maxHP: 15
   dropOptions:
   - dropPrefab: {fileID: 5619336733620520957, guid: 2f6f599acd00bc842bdfc2cf0b3c1b9d, type: 3}
-    chance: 1
+    chance: 0.6
   - dropPrefab: {fileID: 2476473716985759427, guid: 3e176e828dfd06444b40e5d44704a040, type: 3}
     chance: 0.15
   - dropPrefab: {fileID: 2465123361083334762, guid: b7512b1a8696b934db228934b791715d, type: 3}
