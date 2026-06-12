@@ -142,7 +142,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC5C5\uADF8\uB808\uC774\uB4DC_0"
+      name: Dot_0
       rect:
         serializedVersion: 2
         x: 102
@@ -164,7 +164,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC5C5\uADF8\uB808\uC774\uB4DC_1"
+      name: Dot_1
       rect:
         serializedVersion: 2
         x: 584
@@ -199,8 +199,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC5C5\uADF8\uB808\uC774\uB4DC_0": 7474664633707173810
-      "\uC5C5\uADF8\uB808\uC774\uB4DC_1": 2965628325696453810
+      Dot_0: 7474664633707173810
+      Dot_1: 2965628325696453810
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
