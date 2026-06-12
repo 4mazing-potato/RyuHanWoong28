@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class GameplayPauseManager
 {
@@ -10,9 +11,23 @@ public static class GameplayPauseManager
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void InitializeOnLoad()
     {
-        pauseRequestCount = 0;
-        timeScaleBeforePause = 1f;
-        Time.timeScale = 1f;
+        ResetPauseState(1f);
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterSceneLoadedCallback()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+        ResetPauseState(1f);
+    }
+
+    private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (mode == LoadSceneMode.Single)
+        {
+            ResetPauseState(1f);
+        }
     }
 
     public static void RequestPause()
@@ -43,8 +58,13 @@ public static class GameplayPauseManager
 
     public static void ResetPause()
     {
+        ResetPauseState(timeScaleBeforePause > 0f ? timeScaleBeforePause : 1f);
+    }
+
+    private static void ResetPauseState(float timeScale)
+    {
         pauseRequestCount = 0;
-        Time.timeScale = timeScaleBeforePause > 0f ? timeScaleBeforePause : 1f;
         timeScaleBeforePause = 1f;
+        Time.timeScale = timeScale > 0f ? timeScale : 1f;
     }
 }
