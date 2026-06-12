@@ -37,9 +37,7 @@ public class TopDownPlayerController : MonoBehaviour
     {
         if (GameplayPauseManager.IsPaused)
         {
-            animator.SetBool(IsMovingHash, false);
-            animator.SetFloat(MoveXHash, facingDirection.x);
-            animator.SetFloat(MoveYHash, facingDirection.y);
+            UpdateAnimator(false);
             return;
         }
 
@@ -52,6 +50,16 @@ public class TopDownPlayerController : MonoBehaviour
         if (isMoving)
         {
             facingDirection = GetCardinalDirection(movement);
+        }
+
+        UpdateAnimator(isMoving);
+    }
+
+    private void UpdateAnimator(bool isMoving)
+    {
+        if (animator == null)
+        {
+            return;
         }
 
         animator.SetBool(IsMovingHash, isMoving);
