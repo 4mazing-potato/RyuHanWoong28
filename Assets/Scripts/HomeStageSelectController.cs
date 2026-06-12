@@ -13,6 +13,7 @@ public class HomeStageSelectController : MonoBehaviour
     private const string AlternateStartButtonName = "Btn_Start";
     private const string UpgradeButtonName = "BtnUpgrade";
     private const string AlternateUpgradeButtonName = "Btn_Upgrade";
+    private const string ExitButtonName = "BtnExit";
     private const string GameStartPanelName = "Panel_GameStart";
     private const string CloseButtonName = "BtnX";
     private const string AlternateUpgradeCloseButtonName = "BTN_X";
@@ -35,6 +36,7 @@ public class HomeStageSelectController : MonoBehaviour
 
     private Button startButton;
     private Button upgradeButton;
+    private Button exitButton;
     private GameObject gameStartPanel;
     private GameObject upgradePanel;
     private Button closeButton;
@@ -94,6 +96,11 @@ public class HomeStageSelectController : MonoBehaviour
         if (upgradeCloseButton != null)
         {
             upgradeCloseButton.onClick.RemoveListener(HideUpgradePanel);
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.RemoveListener(QuitGame);
         }
     }
 
@@ -155,6 +162,15 @@ public class HomeStageSelectController : MonoBehaviour
         }
     }
 
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     private void CacheReferences()
     {
         startButton = FindButton(StartButtonName);
@@ -164,6 +180,7 @@ public class HomeStageSelectController : MonoBehaviour
         }
 
         upgradeButton = FindButton(UpgradeButtonName) ?? FindButton(AlternateUpgradeButtonName);
+        exitButton = FindButton(ExitButtonName);
         gameStartPanel = FindSceneGameObject(GameStartPanelName);
         upgradePanel = FindSceneGameObject(UpgradePanelName);
         closeButton = FindButtonInGameStartPanel(CloseButtonName) ?? FindButton(CloseButtonName);
@@ -224,6 +241,12 @@ public class HomeStageSelectController : MonoBehaviour
         {
             upgradeCloseButton.onClick.RemoveListener(HideUpgradePanel);
             upgradeCloseButton.onClick.AddListener(HideUpgradePanel);
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.RemoveListener(QuitGame);
+            exitButton.onClick.AddListener(QuitGame);
         }
     }
 
