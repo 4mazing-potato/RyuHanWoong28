@@ -18,6 +18,7 @@ public class StageResultController : MonoBehaviour
     [SerializeField] private MonsterSpawnManager monsterSpawnManager;
 
     private bool isShowingResult;
+    private bool hasSavedSessionCoin;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapForGameScene()
@@ -88,6 +89,7 @@ public class StageResultController : MonoBehaviour
     {
         CacheReferences();
         ConfigureHomeButton();
+        SaveSessionCoinOnce();
 
         if (resultHud != null)
         {
@@ -111,6 +113,23 @@ public class StageResultController : MonoBehaviour
         }
 
         isShowingResult = true;
+    }
+
+    private void SaveSessionCoinOnce()
+    {
+        if (hasSavedSessionCoin)
+        {
+            return;
+        }
+
+        CoinManager coinManager = CoinManager.Instance ?? FindObjectOfType<CoinManager>();
+        if (coinManager == null)
+        {
+            return;
+        }
+
+        hasSavedSessionCoin = true;
+        CoinManager.AddToTotalCoins(coinManager.CurrentCoin);
     }
 
     private void HideResult()

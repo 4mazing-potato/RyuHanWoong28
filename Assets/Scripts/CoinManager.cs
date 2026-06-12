@@ -7,6 +7,7 @@ public class CoinManager : MonoBehaviour
     private const string GameSceneName = "GameScene";
     private const string CoinTextObjectName = "Txt_Coin";
     private const string CoinTextFormat = "Coin : {0}";
+    private const string TotalCoinSaveKey = "TotalCoin";
 
     public static CoinManager Instance { get; private set; }
 
@@ -17,6 +18,36 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinText;
 
     public int CurrentCoin => currentCoin;
+
+    public static int TotalCoin => LoadTotalCoins();
+
+    public static int LoadTotalCoins()
+    {
+        return Mathf.Max(0, PlayerPrefs.GetInt(TotalCoinSaveKey, 0));
+    }
+
+    public static void SaveTotalCoins(int totalCoin)
+    {
+        PlayerPrefs.SetInt(TotalCoinSaveKey, Mathf.Max(0, totalCoin));
+        PlayerPrefs.Save();
+    }
+
+    public static int AddToTotalCoins(int coinAmount)
+    {
+        if (coinAmount <= 0)
+        {
+            return LoadTotalCoins();
+        }
+
+        int totalCoin = LoadTotalCoins() + coinAmount;
+        SaveTotalCoins(totalCoin);
+        return totalCoin;
+    }
+
+    public static void ResetTotalCoins()
+    {
+        SaveTotalCoins(0);
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapForGameScene()

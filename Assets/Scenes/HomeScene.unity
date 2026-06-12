@@ -3348,6 +3348,7 @@ GameObject:
   - component: {fileID: 1752292336}
   - component: {fileID: 1752292335}
   - component: {fileID: 1752292334}
+  - component: {fileID: 1752292338}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3395,6 +3396,18 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
+--- !u!114 &1752292338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752292333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fc1c7d1ae9464fbe0403f623f16007, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::HomeStageSelectController
 --- !u!223 &1752292336
 Canvas:
   m_ObjectHideFlags: 0
