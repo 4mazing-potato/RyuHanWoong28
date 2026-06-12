@@ -5,6 +5,7 @@ public class TopDownPlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private Animator animator;
 
+    private float baseMoveSpeed;
     private Vector2 facingDirection = Vector2.down;
 
     private static readonly int MoveXHash = Animator.StringToHash("moveX");
@@ -13,10 +14,23 @@ public class TopDownPlayerController : MonoBehaviour
 
     private void Awake()
     {
+        baseMoveSpeed = Mathf.Max(0f, moveSpeed);
+        ApplyPermanentUpgrade();
+
         if (animator == null)
         {
             animator = GetComponent<Animator>();
         }
+    }
+
+    private void OnEnable()
+    {
+        PermanentUpgradeManager.UpgradesChanged += ApplyPermanentUpgrade;
+    }
+
+    private void OnDisable()
+    {
+        PermanentUpgradeManager.UpgradesChanged -= ApplyPermanentUpgrade;
     }
 
     private void Update()
@@ -43,6 +57,16 @@ public class TopDownPlayerController : MonoBehaviour
         animator.SetBool(IsMovingHash, isMoving);
         animator.SetFloat(MoveXHash, facingDirection.x);
         animator.SetFloat(MoveYHash, facingDirection.y);
+    }
+
+    private void ApplyPermanentUpgrade()
+    {
+        if (baseMoveSpeed <= 0f)
+        {
+            baseMoveSpeed = Mathf.Max(0f, moveSpeed);
+        }
+
+        moveSpeed = Mathf.Max(0f, PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.MoveSpeed, baseMoveSpeed));
     }
 
     private static Vector2 GetCardinalDirection(Vector2 direction)

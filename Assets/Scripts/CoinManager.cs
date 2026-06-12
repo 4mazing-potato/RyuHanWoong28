@@ -44,6 +44,19 @@ public class CoinManager : MonoBehaviour
         return totalCoin;
     }
 
+    public static bool TrySpendTotalCoins(int coinAmount)
+    {
+        int safeAmount = Mathf.Max(0, coinAmount);
+        int totalCoin = LoadTotalCoins();
+        if (totalCoin < safeAmount)
+        {
+            return false;
+        }
+
+        SaveTotalCoins(totalCoin - safeAmount);
+        return true;
+    }
+
     public static void ResetTotalCoins()
     {
         SaveTotalCoins(0);

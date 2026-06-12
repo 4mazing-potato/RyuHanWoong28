@@ -20,6 +20,7 @@ public class PlayerStatus : MonoBehaviour
     private float hpUpMultiplier = 1f;
     private float pickupRadiusMultiplier = 1f;
     private float healOnDamagePercent;
+    private int criticalChancePermyriad;
     private bool healthInitialized;
 
     public float BaseAttack => baseAttack;
@@ -30,14 +31,24 @@ public class PlayerStatus : MonoBehaviour
     public float BasePickupRadius => basePickupRadius;
     public float CurrentPickupRadius => currentPickupRadius;
     public float HealOnDamagePercent => healOnDamagePercent;
+    public int CriticalChancePermyriad => criticalChancePermyriad;
 
     public event Action HealthChanged;
 
     private void Awake()
     {
-        RecalculateCurrentAttack();
-        RecalculateCurrentPickupRadius();
+        ApplyPermanentUpgrades();
         InitializeHealthForBattle();
+    }
+
+    private void OnEnable()
+    {
+        PermanentUpgradeManager.UpgradesChanged += ApplyPermanentUpgrades;
+    }
+
+    private void OnDisable()
+    {
+        PermanentUpgradeManager.UpgradesChanged -= ApplyPermanentUpgrades;
     }
 
     private void OnValidate()
@@ -154,7 +165,30 @@ public class PlayerStatus : MonoBehaviour
 
     public float CalculateDamage(float damageMultiplier)
     {
-        return currentAttack * Mathf.Max(0f, damageMultiplier);
+        float damage = currentAttack * Mathf.Max(0f, damageMultiplier);
+        if (criticalChancePermyriad > 0 && Random.Range(0, 10000) < criticalChancePermyriad)
+        {
+            damage *= 2f;
+        }
+
+        return damage;
+    }
+
+    private void ApplyPermanentUpgrades()
+    {
+        baseAttack = Mathf.Max(0f, PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.ATK, baseAttack));
+        baseMaxHP = Mathf.Max(1f, PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.HP, baseMaxHP));
+        basePickupRadius = Mathf.Max(0f, PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.Radius, basePickupRadius));
+        criticalChancePermyriad = Mathf.Clamp(Mathf.RoundToInt(PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.CRI, criticalChancePermyriad)), 0, 10000);
+        RecalculateCurrentAttack();
+        RecalculateCurrentPickupRadius();
+
+        if (healthInitialized)
+        {
+            currentMaxHP = Mathf.Max(1f, baseMaxHP * hpUpMultiplier);
+            currentHP = Mathf.Min(currentHP, currentMaxHP);
+            NotifyHealthChanged();
+        }
     }
 
     private void EnsureHealthInitialized()

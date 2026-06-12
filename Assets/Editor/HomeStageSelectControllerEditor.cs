@@ -24,6 +24,15 @@ public class HomeStageSelectControllerEditor : Editor
             controller.AddTotalCoinCheat();
             MarkControllerDirty(controller);
         }
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Upgrade Cheat", EditorStyles.boldLabel);
+
+        if (GUILayout.Button("모든 업그레이드 레벨 0으로 초기화"))
+        {
+            controller.ResetAllUpgradeLevelsCheat();
+            MarkControllerDirty(controller);
+        }
     }
 
     private static void MarkControllerDirty(HomeStageSelectController controller)
