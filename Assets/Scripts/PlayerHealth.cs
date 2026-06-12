@@ -23,6 +23,7 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible;
     private bool isDead;
     private PlayerStatus playerStatus;
+    private int revivalCount;
 
     public float MaxHp => playerStatus != null ? playerStatus.CurrentMaxHP : 0f;
     public float CurrentHp => playerStatus != null ? playerStatus.CurrentHP : 0f;
@@ -40,7 +41,18 @@ public class PlayerHealth : MonoBehaviour
         }
         EnsureCollisionComponents();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
+        ResetRevivalCount();
         UpdateHpBar();
+    }
+
+    private void OnEnable()
+    {
+        PermanentUpgradeManager.UpgradesChanged += ResetRevivalCount;
+    }
+
+    private void OnDisable()
+    {
+        PermanentUpgradeManager.UpgradesChanged -= ResetRevivalCount;
     }
 
     private void OnDestroy()
@@ -200,6 +212,11 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
+        if (TryRevive())
+        {
+            return;
+        }
+
         isDead = true;
 
         if (invincibleCoroutine != null)
@@ -211,5 +228,24 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
         SetSpriteAlpha(1f);
         onDied?.Invoke();
+    }
+
+    private bool TryRevive()
+    {
+        if (revivalCount <= 0 || playerStatus == null)
+        {
+            return false;
+        }
+
+        revivalCount--;
+        playerStatus.SetCurrentMaxHP(playerStatus.CurrentMaxHP, true);
+        UpdateHpBar();
+        StartInvincibility();
+        return true;
+    }
+
+    private void ResetRevivalCount()
+    {
+        revivalCount = Mathf.Max(0, Mathf.RoundToInt(PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.Revival, 0f)));
     }
 }

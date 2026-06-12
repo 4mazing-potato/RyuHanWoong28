@@ -17,17 +17,31 @@ public class AutoShooter : MonoBehaviour
     [SerializeField] private float minTurnCooldown = 0.15f;
 
     private PlayerStatus playerStatus;
+    private float baseFireInterval;
     private Vector2 lastInputDirection = Vector2.right;
     private float nextFireTime;
 
     private void Awake()
     {
+        baseFireInterval = Mathf.Max(0.05f, fireInterval);
+        ApplyPermanentUpgrade();
+
         if (spawnPoint == null)
         {
             spawnPoint = transform;
         }
 
         playerStatus = GetComponent<PlayerStatus>();
+    }
+
+    private void OnEnable()
+    {
+        PermanentUpgradeManager.UpgradesChanged += ApplyPermanentUpgrade;
+    }
+
+    private void OnDisable()
+    {
+        PermanentUpgradeManager.UpgradesChanged -= ApplyPermanentUpgrade;
     }
 
     private void Update()
@@ -90,6 +104,16 @@ public class AutoShooter : MonoBehaviour
         }
 
         scale += amount;
+    }
+
+    private void ApplyPermanentUpgrade()
+    {
+        if (baseFireInterval <= 0f)
+        {
+            baseFireInterval = Mathf.Max(0.05f, fireInterval);
+        }
+
+        fireInterval = Mathf.Max(0.05f, PermanentUpgradeManager.GetStatValue(PlayerUpgradeStat.ATKSpeed, baseFireInterval));
     }
 
     private void Fire()

@@ -11,8 +11,11 @@ public class HomeStageSelectController : MonoBehaviour
     private const string GameSceneName = "GameScene";
     private const string StartButtonName = "BtnStart";
     private const string AlternateStartButtonName = "Btn_Start";
+    private const string UpgradeButtonName = "BtnUpgrade";
+    private const string AlternateUpgradeButtonName = "Btn_Upgrade";
     private const string GameStartPanelName = "Panel_GameStart";
     private const string CloseButtonName = "BtnX";
+    private const string AlternateUpgradeCloseButtonName = "BTN_X";
     private const string ContentName = "Content";
     private const string StageButtonName = "BtnStage";
     private const string StageImageName = "StageImage";
@@ -21,16 +24,30 @@ public class HomeStageSelectController : MonoBehaviour
     private const string StageSpriteCatalogPath = "StageSpriteCatalog";
     private const string UpgradePanelName = "Panel_Upgrade";
     private const string CoinAmountTextName = "CoinAmount";
+    private const string UpgradeCellName = "UpgradeCell";
+    private const string StatusTextName = "Txt_Status";
+    private const string DotsName = "Dots";
+    private const string DotNamePrefix = "Dot_";
+    private const string BuyButtonName = "Btn_Buy";
+    private const string DotSpriteCatalogResourcePath = "UpgradeDotSpriteCatalog";
     private const int CoinCheatAmount = 100;
     private const float StageButtonSpacing = 12f;
 
     private Button startButton;
+    private Button upgradeButton;
     private GameObject gameStartPanel;
+    private GameObject upgradePanel;
     private Button closeButton;
+    private Button upgradeCloseButton;
     private Transform contentRoot;
+    private Transform upgradeContentRoot;
     private GameObject stageButtonTemplate;
+    private GameObject upgradeCellTemplate;
     private TMP_Text coinAmountText;
+    private Sprite dotInactiveSprite;
+    private Sprite dotActiveSprite;
     private readonly List<GameObject> stageButtons = new List<GameObject>();
+    private readonly List<GameObject> upgradeCells = new List<GameObject>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapForHomeScene()
@@ -50,8 +67,10 @@ public class HomeStageSelectController : MonoBehaviour
         CacheReferences();
         RegisterButtons();
         PopulateStageButtons();
+        PopulateUpgradeCells();
         UpdateTotalCoinText();
         HideGameStartPanel();
+        HideUpgradePanel();
     }
 
     private void OnDestroy()
@@ -65,6 +84,16 @@ public class HomeStageSelectController : MonoBehaviour
         {
             closeButton.onClick.RemoveListener(HideGameStartPanel);
         }
+
+        if (upgradeButton != null)
+        {
+            upgradeButton.onClick.RemoveListener(ShowUpgradePanel);
+        }
+
+        if (upgradeCloseButton != null)
+        {
+            upgradeCloseButton.onClick.RemoveListener(HideUpgradePanel);
+        }
     }
 
     public void ShowGameStartPanel()
@@ -75,11 +104,23 @@ public class HomeStageSelectController : MonoBehaviour
         }
     }
 
+    public void ShowUpgradePanel()
+    {
+        if (upgradePanel != null)
+        {
+            upgradePanel.SetActive(true);
+        }
+
+        PopulateUpgradeCells();
+        UpdateTotalCoinText();
+    }
+
     [ContextMenu("Coin/Reset Total Coin To 0")]
     public void ResetTotalCoinCheat()
     {
         CoinManager.ResetTotalCoins();
         UpdateTotalCoinText();
+        RefreshUpgradeCells();
     }
 
     [ContextMenu("Coin/Add 100 Total Coins")]
@@ -87,6 +128,14 @@ public class HomeStageSelectController : MonoBehaviour
     {
         CoinManager.AddToTotalCoins(CoinCheatAmount);
         UpdateTotalCoinText();
+        RefreshUpgradeCells();
+    }
+
+    [ContextMenu("Upgrade/Reset All Upgrade Levels To 0")]
+    public void ResetAllUpgradeLevelsCheat()
+    {
+        PermanentUpgradeManager.ResetAllUpgradeLevels();
+        RefreshUpgradeCells();
     }
 
     public void HideGameStartPanel()
@@ -94,6 +143,14 @@ public class HomeStageSelectController : MonoBehaviour
         if (gameStartPanel != null)
         {
             gameStartPanel.SetActive(false);
+        }
+    }
+
+    public void HideUpgradePanel()
+    {
+        if (upgradePanel != null)
+        {
+            upgradePanel.SetActive(false);
         }
     }
 
@@ -105,11 +162,18 @@ public class HomeStageSelectController : MonoBehaviour
             startButton = FindButton(AlternateStartButtonName);
         }
 
+        upgradeButton = FindButton(UpgradeButtonName) ?? FindButton(AlternateUpgradeButtonName);
         gameStartPanel = FindSceneGameObject(GameStartPanelName);
+        upgradePanel = FindSceneGameObject(UpgradePanelName);
         closeButton = FindButtonInGameStartPanel(CloseButtonName) ?? FindButton(CloseButtonName);
+        upgradeCloseButton = FindButtonInUpgradePanel(AlternateUpgradeCloseButtonName) ?? FindButtonInUpgradePanel(CloseButtonName);
         GameObject contentObject = FindGameStartPanelChild(ContentName) ?? FindSceneGameObject(ContentName);
         contentRoot = contentObject != null ? contentObject.transform : null;
         stageButtonTemplate = FindStageButtonTemplate();
+        GameObject upgradeContentObject = FindUpgradePanelChild(ContentName);
+        upgradeContentRoot = upgradeContentObject != null ? upgradeContentObject.transform : null;
+        upgradeCellTemplate = FindUpgradeCellTemplate();
+        CacheDotSprites();
         coinAmountText = FindCoinAmountText();
     }
 
@@ -128,7 +192,6 @@ public class HomeStageSelectController : MonoBehaviour
 
     private TMP_Text FindCoinAmountText()
     {
-        GameObject upgradePanel = FindSceneGameObject(UpgradePanelName);
         Transform upgradePanelTransform = upgradePanel != null ? upgradePanel.transform : null;
         return FindChildComponent<TMP_Text>(upgradePanelTransform, CoinAmountTextName)
             ?? FindChildComponent<TMP_Text>(transform, CoinAmountTextName);
@@ -146,6 +209,18 @@ public class HomeStageSelectController : MonoBehaviour
         {
             closeButton.onClick.RemoveListener(HideGameStartPanel);
             closeButton.onClick.AddListener(HideGameStartPanel);
+        }
+
+        if (upgradeButton != null)
+        {
+            upgradeButton.onClick.RemoveListener(ShowUpgradePanel);
+            upgradeButton.onClick.AddListener(ShowUpgradePanel);
+        }
+
+        if (upgradeCloseButton != null)
+        {
+            upgradeCloseButton.onClick.RemoveListener(HideUpgradePanel);
+            upgradeCloseButton.onClick.AddListener(HideUpgradePanel);
         }
     }
 
@@ -262,10 +337,224 @@ public class HomeStageSelectController : MonoBehaviour
         }
     }
 
+    private void PopulateUpgradeCells()
+    {
+        if (upgradeContentRoot == null || upgradeCellTemplate == null)
+        {
+            return;
+        }
+
+        ClearGeneratedUpgradeCells();
+        IReadOnlyList<PlayerUpgradeStat> stats = PermanentUpgradeManager.Stats;
+        Vector2 templatePosition = GetUpgradeCellTemplateAnchoredPosition();
+        float cellHeight = GetUpgradeCellHeight();
+
+        for (int i = 0; i < stats.Count; i++)
+        {
+            PlayerUpgradeStat stat = stats[i];
+            GameObject upgradeCell = i == 0
+                ? upgradeCellTemplate
+                : Instantiate(upgradeCellTemplate, upgradeContentRoot);
+
+            upgradeCell.name = $"{UpgradeCellName}_{stat}";
+            upgradeCell.SetActive(true);
+            SetUpgradeCellPosition(upgradeCell, templatePosition, cellHeight, i);
+            BindUpgradeCell(upgradeCell, stat);
+            upgradeCells.Add(upgradeCell);
+        }
+
+        ResizeUpgradeContent(stats.Count, cellHeight);
+        if (stats.Count == 0)
+        {
+            upgradeCellTemplate.SetActive(false);
+        }
+    }
+
+    private void RefreshUpgradeCells()
+    {
+        for (int i = 0; i < upgradeCells.Count; i++)
+        {
+            GameObject upgradeCell = upgradeCells[i];
+            if (upgradeCell == null)
+            {
+                continue;
+            }
+
+            string statName = upgradeCell.name.Replace($"{UpgradeCellName}_", string.Empty);
+            if (Enum.TryParse(statName, out PlayerUpgradeStat stat))
+            {
+                BindUpgradeCell(upgradeCell, stat);
+            }
+        }
+
+        UpdateTotalCoinText();
+    }
+
+    private void ClearGeneratedUpgradeCells()
+    {
+        upgradeCells.Clear();
+        if (upgradeContentRoot == null)
+        {
+            return;
+        }
+
+        for (int i = upgradeContentRoot.childCount - 1; i >= 0; i--)
+        {
+            Transform child = upgradeContentRoot.GetChild(i);
+            if (child.gameObject == upgradeCellTemplate)
+            {
+                continue;
+            }
+
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void BindUpgradeCell(GameObject upgradeCell, PlayerUpgradeStat stat)
+    {
+        UpgradeStatusData currentData = PermanentUpgradeManager.GetCurrentData(stat);
+        UpgradeStatusData nextData = PermanentUpgradeManager.GetNextData(stat);
+        int currentLevel = PermanentUpgradeManager.GetLevel(stat);
+
+        TMP_Text statusText = FindChildComponent<TMP_Text>(upgradeCell.transform, StatusTextName);
+        if (statusText != null)
+        {
+            statusText.text = currentData != null ? currentData.StatName : stat.ToString();
+        }
+
+        Button buyButton = FindChildComponent<Button>(upgradeCell.transform, BuyButtonName);
+        TMP_Text buyText = buyButton != null ? buyButton.GetComponentInChildren<TMP_Text>(true) : null;
+        if (buyText != null)
+        {
+            buyText.text = nextData != null ? nextData.CoinValue.ToString() : "MAX";
+        }
+
+        if (buyButton != null)
+        {
+            buyButton.onClick.RemoveAllListeners();
+            buyButton.interactable = nextData != null && CoinManager.LoadTotalCoins() >= nextData.CoinValue;
+            buyButton.onClick.AddListener(() => TryBuyUpgrade(stat));
+        }
+
+        ApplyDotImages(upgradeCell.transform, currentLevel);
+    }
+
+    private void TryBuyUpgrade(PlayerUpgradeStat stat)
+    {
+        if (!PermanentUpgradeManager.TryUpgrade(stat, out _))
+        {
+            RefreshUpgradeCells();
+            return;
+        }
+
+        RefreshUpgradeCells();
+    }
+
+    private void ApplyDotImages(Transform upgradeCellTransform, int currentLevel)
+    {
+        Transform dotsRoot = FindChild(upgradeCellTransform, DotsName);
+        if (dotsRoot == null)
+        {
+            return;
+        }
+
+        for (int i = 1; i <= PermanentUpgradeManager.MaxUpgradeLevel; i++)
+        {
+            Transform dot = FindChild(dotsRoot, $"{DotNamePrefix}{i}");
+            Image image = dot != null ? dot.GetComponent<Image>() : null;
+            if (image == null)
+            {
+                continue;
+            }
+
+            if (dotInactiveSprite == null)
+            {
+                dotInactiveSprite = image.sprite;
+            }
+
+            image.sprite = i <= currentLevel && dotActiveSprite != null ? dotActiveSprite : dotInactiveSprite;
+        }
+    }
+
+    private Vector2 GetUpgradeCellTemplateAnchoredPosition()
+    {
+        RectTransform templateTransform = upgradeCellTemplate.GetComponent<RectTransform>();
+        return templateTransform != null ? templateTransform.anchoredPosition : Vector2.zero;
+    }
+
+    private float GetUpgradeCellHeight()
+    {
+        RectTransform templateTransform = upgradeCellTemplate.GetComponent<RectTransform>();
+        return templateTransform != null ? Mathf.Max(1f, templateTransform.rect.height) : 1f;
+    }
+
+    private static void SetUpgradeCellPosition(GameObject upgradeCell, Vector2 templatePosition, float cellHeight, int index)
+    {
+        RectTransform rectTransform = upgradeCell.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = new Vector2(
+                templatePosition.x,
+                templatePosition.y - (index * (cellHeight + StageButtonSpacing)));
+        }
+    }
+
+    private void ResizeUpgradeContent(int cellCount, float cellHeight)
+    {
+        RectTransform contentTransform = upgradeContentRoot as RectTransform;
+        if (contentTransform != null)
+        {
+            float contentHeight = Mathf.Max(
+                contentTransform.sizeDelta.y,
+                (cellCount * cellHeight) + (Mathf.Max(0, cellCount - 1) * StageButtonSpacing));
+            contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, contentHeight);
+        }
+    }
+
     private void LoadStage(int stageId)
     {
         StageSelection.SelectStage(stageId);
         SceneManager.LoadScene(GameSceneName);
+    }
+
+    private GameObject FindUpgradeCellTemplate()
+    {
+        if (upgradeContentRoot != null)
+        {
+            Transform directChild = upgradeContentRoot.Find(UpgradeCellName);
+            if (directChild != null)
+            {
+                return directChild.gameObject;
+            }
+
+            for (int i = 0; i < upgradeContentRoot.childCount; i++)
+            {
+                Transform child = upgradeContentRoot.GetChild(i);
+                if (child.name.StartsWith(UpgradeCellName, StringComparison.Ordinal))
+                {
+                    return child.gameObject;
+                }
+            }
+        }
+
+        Transform panelTransform = upgradePanel != null ? upgradePanel.transform : null;
+        Transform panelUpgradeCell = FindChild(panelTransform, UpgradeCellName);
+        if (panelUpgradeCell != null)
+        {
+            return panelUpgradeCell.gameObject;
+        }
+
+        return Resources.Load<GameObject>(UpgradeCellName);
+    }
+
+    private void CacheDotSprites()
+    {
+        UpgradeDotSpriteCatalog catalog = Resources.Load<UpgradeDotSpriteCatalog>(DotSpriteCatalogResourcePath);
+        if (catalog != null)
+        {
+            dotInactiveSprite = catalog.InactiveSprite;
+            dotActiveSprite = catalog.ActiveSprite;
+        }
     }
 
     private GameObject FindStageButtonTemplate()
@@ -322,6 +611,19 @@ public class HomeStageSelectController : MonoBehaviour
 
         StageSpriteCatalog catalog = Resources.Load<StageSpriteCatalog>(StageSpriteCatalogPath);
         return catalog != null && catalog.TryGetSprite(trimmedName, out sprite) ? sprite : null;
+    }
+
+    private Button FindButtonInUpgradePanel(string objectName)
+    {
+        GameObject gameObject = FindUpgradePanelChild(objectName);
+        return gameObject != null ? gameObject.GetComponent<Button>() : null;
+    }
+
+    private GameObject FindUpgradePanelChild(string objectName)
+    {
+        Transform panelTransform = upgradePanel != null ? upgradePanel.transform : null;
+        Transform child = FindChild(panelTransform, objectName);
+        return child != null ? child.gameObject : null;
     }
 
     private Button FindButtonInGameStartPanel(string objectName)
