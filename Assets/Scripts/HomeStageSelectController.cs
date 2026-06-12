@@ -19,6 +19,9 @@ public class HomeStageSelectController : MonoBehaviour
     private const string AlternateStageImageName = "Image";
     private const string StageTextName = "Text (TMP)";
     private const string StageSpriteCatalogPath = "StageSpriteCatalog";
+    private const string UpgradePanelName = "Panel_Upgrade";
+    private const string CoinAmountTextName = "CoinAmount";
+    private const int CoinCheatAmount = 100;
     private const float StageButtonSpacing = 12f;
 
     private Button startButton;
@@ -26,6 +29,7 @@ public class HomeStageSelectController : MonoBehaviour
     private Button closeButton;
     private Transform contentRoot;
     private GameObject stageButtonTemplate;
+    private TMP_Text coinAmountText;
     private readonly List<GameObject> stageButtons = new List<GameObject>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -46,6 +50,7 @@ public class HomeStageSelectController : MonoBehaviour
         CacheReferences();
         RegisterButtons();
         PopulateStageButtons();
+        UpdateTotalCoinText();
         HideGameStartPanel();
     }
 
@@ -70,6 +75,20 @@ public class HomeStageSelectController : MonoBehaviour
         }
     }
 
+    [ContextMenu("Coin/Reset Total Coin To 0")]
+    public void ResetTotalCoinCheat()
+    {
+        CoinManager.ResetTotalCoins();
+        UpdateTotalCoinText();
+    }
+
+    [ContextMenu("Coin/Add 100 Total Coins")]
+    public void AddTotalCoinCheat()
+    {
+        CoinManager.AddToTotalCoins(CoinCheatAmount);
+        UpdateTotalCoinText();
+    }
+
     public void HideGameStartPanel()
     {
         if (gameStartPanel != null)
@@ -91,6 +110,28 @@ public class HomeStageSelectController : MonoBehaviour
         GameObject contentObject = FindGameStartPanelChild(ContentName) ?? FindSceneGameObject(ContentName);
         contentRoot = contentObject != null ? contentObject.transform : null;
         stageButtonTemplate = FindStageButtonTemplate();
+        coinAmountText = FindCoinAmountText();
+    }
+
+    private void UpdateTotalCoinText()
+    {
+        if (coinAmountText == null)
+        {
+            coinAmountText = FindCoinAmountText();
+        }
+
+        if (coinAmountText != null)
+        {
+            coinAmountText.text = CoinManager.LoadTotalCoins().ToString();
+        }
+    }
+
+    private TMP_Text FindCoinAmountText()
+    {
+        GameObject upgradePanel = FindSceneGameObject(UpgradePanelName);
+        Transform upgradePanelTransform = upgradePanel != null ? upgradePanel.transform : null;
+        return FindChildComponent<TMP_Text>(upgradePanelTransform, CoinAmountTextName)
+            ?? FindChildComponent<TMP_Text>(transform, CoinAmountTextName);
     }
 
     private void RegisterButtons()
