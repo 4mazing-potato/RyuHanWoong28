@@ -41,6 +41,7 @@ public class HomeStageSelectController : MonoBehaviour
     private Button upgradeCloseButton;
     private Transform contentRoot;
     private Transform upgradeContentRoot;
+    private ScrollRect upgradeScrollRect;
     private GameObject stageButtonTemplate;
     private GameObject upgradeCellTemplate;
     private TMP_Text coinAmountText;
@@ -172,6 +173,8 @@ public class HomeStageSelectController : MonoBehaviour
         stageButtonTemplate = FindStageButtonTemplate();
         GameObject upgradeContentObject = FindUpgradePanelChild(ContentName);
         upgradeContentRoot = upgradeContentObject != null ? upgradeContentObject.transform : null;
+        upgradeScrollRect = FindUpgradeScrollRect();
+        ConfigureUpgradeScrollRect();
         upgradeCellTemplate = FindUpgradeCellTemplate();
         CacheDotSprites();
         coinAmountText = FindCoinAmountText();
@@ -364,6 +367,7 @@ public class HomeStageSelectController : MonoBehaviour
         }
 
         ResizeUpgradeContent(stats.Count, cellHeight);
+        ResetUpgradeScrollPosition();
         if (stats.Count == 0)
         {
             upgradeCellTemplate.SetActive(false);
@@ -476,6 +480,17 @@ public class HomeStageSelectController : MonoBehaviour
         }
     }
 
+    private void ResetUpgradeScrollPosition()
+    {
+        if (upgradeScrollRect == null)
+        {
+            return;
+        }
+
+        Canvas.ForceUpdateCanvases();
+        upgradeScrollRect.verticalNormalizedPosition = 1f;
+    }
+
     private Vector2 GetUpgradeCellTemplateAnchoredPosition()
     {
         RectTransform templateTransform = upgradeCellTemplate.GetComponent<RectTransform>();
@@ -484,31 +499,83 @@ public class HomeStageSelectController : MonoBehaviour
 
     private float GetUpgradeCellHeight()
     {
+        GridLayoutGroup gridLayoutGroup = upgradeContentRoot != null
+            ? upgradeContentRoot.GetComponent<GridLayoutGroup>()
+            : null;
+        if (gridLayoutGroup != null && gridLayoutGroup.cellSize.y > 0f)
+        {
+            return gridLayoutGroup.cellSize.y;
+        }
+
         RectTransform templateTransform = upgradeCellTemplate.GetComponent<RectTransform>();
-        return templateTransform != null ? Mathf.Max(1f, templateTransform.rect.height) : 1f;
+        if (templateTransform != null && templateTransform.rect.height > 0f)
+        {
+            return templateTransform.rect.height;
+        }
+
+        LayoutElement layoutElement = upgradeCellTemplate.GetComponent<LayoutElement>();
+        if (layoutElement != null && layoutElement.preferredHeight > 0f)
+        {
+            return layoutElement.preferredHeight;
+        }
+
+        return 20f;
     }
 
-    private static void SetUpgradeCellPosition(GameObject upgradeCell, Vector2 templatePosition, float cellHeight, int index)
+    private float GetUpgradeCellSpacing()
     {
+        GridLayoutGroup gridLayoutGroup = upgradeContentRoot != null
+            ? upgradeContentRoot.GetComponent<GridLayoutGroup>()
+            : null;
+        return gridLayoutGroup != null ? gridLayoutGroup.spacing.y : StageButtonSpacing;
+    }
+
+    private void SetUpgradeCellPosition(GameObject upgradeCell, Vector2 templatePosition, float cellHeight, int index)
+    {
+        if (upgradeContentRoot != null && upgradeContentRoot.GetComponent<GridLayoutGroup>() != null)
+        {
+            return;
+        }
+
         RectTransform rectTransform = upgradeCell.GetComponent<RectTransform>();
         if (rectTransform != null)
         {
             rectTransform.anchoredPosition = new Vector2(
                 templatePosition.x,
-                templatePosition.y - (index * (cellHeight + StageButtonSpacing)));
+                templatePosition.y - (index * (cellHeight + GetUpgradeCellSpacing())));
         }
     }
 
     private void ResizeUpgradeContent(int cellCount, float cellHeight)
     {
         RectTransform contentTransform = upgradeContentRoot as RectTransform;
-        if (contentTransform != null)
+        if (contentTransform == null)
         {
-            float contentHeight = Mathf.Max(
-                contentTransform.sizeDelta.y,
-                (cellCount * cellHeight) + (Mathf.Max(0, cellCount - 1) * StageButtonSpacing));
-            contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, contentHeight);
+            return;
         }
+
+        float contentHeight = CalculateUpgradeContentHeight(cellCount, cellHeight);
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, contentHeight);
+    }
+
+    private float CalculateUpgradeContentHeight(int cellCount, float cellHeight)
+    {
+        GridLayoutGroup gridLayoutGroup = upgradeContentRoot != null
+            ? upgradeContentRoot.GetComponent<GridLayoutGroup>()
+            : null;
+        if (gridLayoutGroup != null)
+        {
+            int rowCount = gridLayoutGroup.constraint == GridLayoutGroup.Constraint.FixedColumnCount
+                ? Mathf.CeilToInt(cellCount / (float)Mathf.Max(1, gridLayoutGroup.constraintCount))
+                : cellCount;
+
+            return gridLayoutGroup.padding.top
+                + gridLayoutGroup.padding.bottom
+                + (rowCount * gridLayoutGroup.cellSize.y)
+                + (Mathf.Max(0, rowCount - 1) * gridLayoutGroup.spacing.y);
+        }
+
+        return (cellCount * cellHeight) + (Mathf.Max(0, cellCount - 1) * GetUpgradeCellSpacing());
     }
 
     private void LoadStage(int stageId)
@@ -617,6 +684,40 @@ public class HomeStageSelectController : MonoBehaviour
     {
         GameObject gameObject = FindUpgradePanelChild(objectName);
         return gameObject != null ? gameObject.GetComponent<Button>() : null;
+    }
+
+    private ScrollRect FindUpgradeScrollRect()
+    {
+        Transform panelTransform = upgradePanel != null ? upgradePanel.transform : null;
+        return FindChildComponent<ScrollRect>(panelTransform, "Scroll View")
+            ?? (upgradeContentRoot != null ? upgradeContentRoot.GetComponentInParent<ScrollRect>(true) : null);
+    }
+
+    private void ConfigureUpgradeScrollRect()
+    {
+        if (upgradeScrollRect == null)
+        {
+            return;
+        }
+
+        RectTransform contentTransform = upgradeContentRoot as RectTransform;
+        if (contentTransform != null)
+        {
+            upgradeScrollRect.content = contentTransform;
+        }
+
+        upgradeScrollRect.horizontal = false;
+        upgradeScrollRect.vertical = true;
+
+        if (upgradeScrollRect.viewport == null && contentTransform != null)
+        {
+            upgradeScrollRect.viewport = contentTransform.parent as RectTransform;
+        }
+
+        if (upgradeScrollRect.verticalScrollbar == null)
+        {
+            upgradeScrollRect.verticalScrollbar = FindChildComponent<Scrollbar>(upgradeScrollRect.transform, "Scrollbar Vertical");
+        }
     }
 
     private GameObject FindUpgradePanelChild(string objectName)
